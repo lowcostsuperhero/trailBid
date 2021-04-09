@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 1 00:00:34 07-Apr-2021 rudyz $
+# name: $Id: trailBid.py 2 00:54:29 09-Apr-2021 rudyz $
 
 import getopt
 import posixpath
@@ -77,22 +77,22 @@ class TrailBid():
       use: Print the constructed relations between the instantiated
            objects
       """
-      if (settings["verbosity"] >= 1):
+      if (settings["verbosity"] >= 2):
          print()
          printHeading("/// time slot trails ///", 0, 1)
          self.timeSlots.printTrails(indent = 0, headLevel = 2, detail = 2)
 
-      if (settings["verbosity"] >= 2):
+      if (settings["verbosity"] >= 3):
          print()
          printHeading("/// time slot bids ///", 0, 1)
          self.timeSlots.printBids(indent = 0, headLevel = 2, detail = 1)
 
-      if (settings["verbosity"] >= 2):
+      if (settings["verbosity"] >= 3):
          print()
          printHeading("/// time slot hashers ///", 0, 1)
          self.timeSlots.printHashers(indent = 0, headLevel = 2, detail = 1)
 
-      if (settings["verbosity"] >= 2):
+      if (settings["verbosity"] >= 3):
          print()
          printHeading("/// time slot unique hashers ///", 0, 1)
          for timeSlot in self.timeSlots:
@@ -100,7 +100,7 @@ class TrailBid():
             timeSlot.getHashers().printHashers(
                                      indent = 1, headLevel = 3, detail = 1)
 
-      if (settings["verbosity"] >= 2):
+      if (settings["verbosity"] >= 3):
          print()
          printHeading("/// hasher bids ///", 0, 1)
          self.hashers.printBids(indent = 0)
@@ -240,15 +240,15 @@ if ( __name__ == "__main__" ):
 
    print()
    trailBid.runBid()
-   trailBid.runBid()
 
-#    print()
-#    printHeading("/// ranked bids ///", 0, 1)
-#    for timeSlot in trailBid.timeSlots:
-#       print(timeSlot.prettyListDisplay())
-#       timeSlot.getBids().sortEquitably().printBids(indent    = 0,
-#                                                    headLevel = 2,
-#                                                    detail    = 1)
+   if (settings["verbosity"] >= 1):
+      print()
+      printHeading("/// ranked bids ///", 0, 1)
+      for timeSlot in trailBid.timeSlots:
+         print(timeSlot.prettyListDisplay())
+         timeSlot.getBids().sortEquitably().printBids(indent    = 0,
+                                                      headLevel = 2,
+                                                      detail    = 1)
 
    print()
 #    trailBid.printResult(1)
