@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 2 00:50:52 09-Apr-2021 rudyz $
+# name: $Id: hasher.py 3 00:54:50 09-Apr-2021 rudyz $
 
 import csv
 import random
@@ -207,7 +207,7 @@ class Hashers:
                   try:
                      hasher = Hasher(int(row[0]), row[1], row[2])
                      self.add(hasher)
-                     if (settings["verbosity"] >= 2):
+                     if (settings["verbosity"] >= 3):
                         print(str(hasher))
                   except DuplicateError as exception:
                      if isinstance(exception, DuplicateError):
@@ -216,7 +216,7 @@ class Hashers:
                                         row[0] + ", " + row[1])
                      printFileReadError(lineNumber, row[0] + ", " + row[1])
 
-            if (settings["verbosity"] < 2):
+            if (settings["verbosity"] < 3):
                print(str(self.count) + " " +
                      plural(self.count, "hasher"))
 

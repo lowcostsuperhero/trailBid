@@ -1,4 +1,4 @@
-# name: $Id: bid.py 1 23:59:55 06-Apr-2021 rudyz $
+# name: $Id: bid.py 2 00:54:50 09-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -160,7 +160,7 @@ class Bids:
                      else:
                         bid = Bid(hasher, trail, value)
                         self.add(bid)
-                        if (settings["verbosity"] >= 2):
+                        if (settings["verbosity"] >= 3):
                            print(str(bid))
                         hasher.addBid(bid)
                         trail.addBid(bid)
@@ -170,7 +170,7 @@ class Bids:
                      printFileReadError(lineNumber,
                                         str(hasher) + " -> " + str(trail))
                      raise
-            if (settings["verbosity"] < 2):
+            if (settings["verbosity"] < 3):
                print(str(self.count) + " " +
                      plural(self.count, "bid"))
 
