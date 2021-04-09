@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 1 23:59:56 06-Apr-2021 rudyz $
+# name: $Id: hasher.py 2 00:50:52 09-Apr-2021 rudyz $
 
 import csv
 import random
@@ -11,6 +11,8 @@ import trail as trail_module
 
 from resource import *
 from setting  import *
+
+random.seed()
 
 ###########################################################################
 ###########################################################################
