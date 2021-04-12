@@ -1,4 +1,4 @@
-# name: $Id: bid.py 2 00:54:50 09-Apr-2021 rudyz $
+# name: $Id: bid.py 3 23:37:29 11-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -8,6 +8,7 @@ import hasher   as hasher_module
 import timeSlot as timeSlot_module
 import trail    as trail_module
 
+from param    import *
 from resource import *
 from setting  import *
 
@@ -48,49 +49,59 @@ class Bid:
 
 ###########################################################################
 
-   def printBid(self, indent = -1, detail = 0):
+   def printBid(self, param = Param()):
       """
       use: Print list of bids belonging to us
       usage: See TimeSlots.printBids()
       """
-      if (detail >= 1):
-         print("".ljust(max(indent, 0))                 +
+      param = Param(param).default([("indent", -1),
+                                    ("detail",  0)])
+
+      if (param["detail"] >= 1):
+         print("".ljust(max(param["indent"], 0))        +
                self.hasher.prettyListDisplay() + " ~ "  +
                "{:>4d}".format(self.value)     + " -> " +
                self.trail.prettyListDisplay())
       else:
-         print("".ljust(max(indent, 0))                 +
+         print("".ljust(max(param["indent"], 0))        +
                self.hasher.prettyListDisplay() + " -> " +
                self.trail.prettyListDisplay())
 
 ###########################################################################
 
-   def printHasher(self, indent = -1, detail = 0):
+   def printHasher(self, param = Param()):
       """
       use: Print hasher who submitted this bid
       usage: See TimeSlots.printBids()
       """
-      if (detail >= 1):
-         print("".ljust(max(indent, 0))                 +
+      param = Param(param).default([("indent", -1),
+                                    ("detail",  0)])
+
+      if (param["detail"] >= 1):
+         print("".ljust(max(param["indent"], 0))                 +
                self.hasher.prettyListDisplay() + " ~ "  +
                "{:>4d}".format(self.value))
       else:
-         print("".ljust(max(indent, 0)) +
+         print("".ljust(max(param["indent"], 0)) +
                self.hasher.prettyListDisplay())
 
 ###########################################################################
 
-   def printTrail(self, indent = -1, headLevel = 0, detail = 0):
+   def printTrail(self, param = Param()):
       """
       use: Print trail that is bidded on by this bid
       usage: See TimeSlots.printBids()
       """
-      if (detail >= 1):
-         print("".ljust(max(indent, 0)) +
+      param = Param(param).default([('indent'   , -1),
+                                    ('headLevel',  0),
+                                    ('detail'   ,  0)])
+      if (param["detail"] >= 1):
+         print("".ljust(max(param["indent"], 0)) +
                "{} ~ {:>4d}".format(self.trail.prettyListDisplay(),
                                     self.value))
       else:
-        self.trail.printTrail(indent, 0)
+         param["detail"] = 0
+         self.trail.printTrail(param)
 
 ###########################################################################
 
@@ -333,35 +344,43 @@ class Bids:
 
 ###########################################################################
 
-   def printBids(self, indent = -1, headLevel = 0, detail = 0):
+   def printBids(self, param = Param):
       """
       use: Print list of bids belonging to us
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
       for bid in self.list:
-         bid.printBid(indent, detail)
+         bid.printBid(paraml)
 
 ###########################################################################
 
-   def printHashers(self, indent = -1, headLevel = 0, detail = 0):
+   def printHashers(self, param = Param()):
       """
       use: Print list of hashers who have submitted a bid belonging to
            us
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("deftail"  ,  0)])
       for bid in self.list:
-         bid.printHasher(indent, detail)
+         bid.printHasher(param)
 
 ###########################################################################
 
-   def printTrails(self, indent = -1, headLevel = 0, detail = 0):
+   def printTrails(self, param = Param()):
       """
       use: Print list of trails which have been bidded on by a bid
            belonging to us
       usage: See TimeSlots.printBids()
       """
       for bid in self.list:
-         bid.printTrail(indent, headLevel, detail)
+         bid.printTrail(Param(param).default([('indent'   , -1),
+                                              ('headLevel',  0),
+                                              ('detail'   ,  0)]))
 
 ###########################################################################
 
