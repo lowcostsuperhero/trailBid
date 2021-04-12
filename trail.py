@@ -1,4 +1,4 @@
-# name: $Id: trail.py 1 23:59:58 06-Apr-2021 rudyz $
+# name: $Id: trail.py 2 23:37:30 11-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -6,6 +6,7 @@ import sys
 import bid    as bid_module
 import hasher as hasher_module
 
+from param    import *
 from resource import *
 from setting  import *
 
@@ -144,29 +145,41 @@ class Trail:
 
 ###########################################################################
 
-   def printBids(self, indent = -1, headLevel = 0, detail = 0):
+
+   def printBids(self, param = Param()):
       """
       use: Print list of all bids submitted for this trail
       usage: See TimeSlots.printBids()
       """
-      self.bids.printBids(indent, headLevel, detail)
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
+      self.bids.printBids(param)
 
 ###########################################################################
 
-   def printHashers(self, indent = -1, headLevel = 0, detail = 0):
+   def printHashers(self, param = Param()):
       """
       use: Print list of all hashers who have submitted a bid for this
            trail
       usage: See TimeSlots.printBids()
       """
-      printHeading(self.name, indent, headLevel)
-      self.bids.printHashers(indent    + 1 if indent >= 0 else indent   ,
-                             headLevel + 1 if headLevel   else headLevel,
-                             detail)
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
+      printHeading(self.name, param["indent"], param["headLevel"])
+
+      if (param["indent"   ] >= 0):
+         param["indent"  ] = param["indent"   ] + 1
+      if (param["headLevel"] >  0):
+         param["headLeel"] = param["headLevel"] + 1
+      self.bids.printHashers(param)
 
 ###########################################################################
 
-   def printTrail(self, indent = -1, detail = 0):
+   def printTrail(self, param = Param()):
       """
       use: Print, at minimum, this trail's ID and name
       usage: See TimeSlots.printBids().
@@ -174,44 +187,56 @@ class Trail:
                 1: also print trail capacity
                 2: also print bid count, trail capacity, and total bid value
       """
-      if (detail >= 2):
-         print("".ljust(max(indent, 0)) +
+      param = Param(param).default([('indent', -1),
+                                    ('detail',  0)])
+
+      if (param["detail"] >= 2):
+         print("".ljust(max(param["indent"], 0)) +
                self.prettyListDisplay() +
+
+
                " [" + "{:>5d}/{:<5d} ~{:<7d}".format(self.bidCount,
                                                      self.capacity,
                                                      self.bidValue) + "]")
-      elif (detail == 1):
-         print("".ljust(max(indent, 0)) +
+      elif (param["detail"] == 1):
+         print("".ljust(max(param["indent"], 0)) +
                self.prettyListDisplay() +
                " [" + str(self.capacity) + "]")
       else:
-         print("".ljust(max(indent, 0)) + self.prettyListDisplay())
+         print("".ljust(max(param["indent"], 0)) +
+               self.prettyListDisplay())
 
 ###########################################################################
 
-   def printResultByTrail(self, indent = -1, headLevel = 0, detail = 0):
+   def printResultByTrail(self, param = Param()):
       """
       use: Print list of hashers with a successful bid for this trail
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
       (lowest, highest) = self.successfulBids.bookendValues
 #       printHeading(self.name + " (" + str(self.successfulBidsCount) + "/" +
 #                                       str(self.capacity) + ") "           +
 #                                str(highest) + " ~ " + str(lowest),
-#                    indent,
-#                    headLevel)
-      printHeading(self.name, indent, headLevel)
+#                    param["indent"],
+#                    param["headLevel"])
+      printHeading(self.name, param)
       printHeading("- On trail = " +
                    str(self.successfulBidsCount) + "/"  +
                    str(self.capacity)            + "; " +
                    "bid range = " + str(highest) + "~"  +
-                                   str(lowest),
-                   indent, headLevel)
+                                    str(lowest),
+                   param["indent"], param["headLevel"])
       self.successfulBids.sortByHasherName()
-      self.successfulBids.printHashers(
-              indent    + 1 if indent >= 0 else indent   ,
-              headLevel + 1 if headLevel   else headLevel,
-              detail)
+
+      if (param["indent"   ] >= 0):
+         param["indent"  ] = param["indent"   ] + 1
+      if (param["headLevel"] >  0):
+         param["headLeel"] = param["headLevel"] + 1
+      self.successfulBids.printHashers(param)
 
 ###########################################################################
 
@@ -324,6 +349,16 @@ class Trails:
       """
       return(len(self.list))
 
+###################################
+
+   @property
+   def successfulBookendValues(self):
+      """
+      use: Lowest and highest values of successful bids belonging to us
+      post: Return value is a tuple of two element
+      """
+      return(self.successfulBids.bookendValues)
+
 ###########################################################################
 
    def add(self, trail):
@@ -399,55 +434,74 @@ class Trails:
 
 ###########################################################################
 
-   def printBids(self, indent = -1, headLevel = 0, detail = 0):
+   def printBids(self, param = Param()):
       """
       use: Print list of all bids received for trails belonging to us
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
       for trail in self.list:
-         trail.printBids(indent, headLevel, detail)
+         trail.printBids(param)
 
 ###########################################################################
 
-   def printHashers(self, indent = -1, headLevel = 0, detail = 0):
+   def printHashers(self, param):
       """
       use: Print list of all hashers who have submitted bids for trails
            belonging to us
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
       nTrails = 0
       for trail in self.list:
          if (nTrails):
             print()
-         trail.printHashers(indent, headLevel, detail)
+         trail.printHashers(param)
          nTrails += 1
 
 ###########################################################################
 
-   def printResultByTrail(self, indent = -1, headLevel = 0, detail = 0):
+   def printResultByTrail(self, param = Param()):
       """
       use: For each trail, print list of hashers with a successful bid for
            the trail
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
       nTrails = 0
       for trail in self.sortBySequence():
          if (nTrails):
             print()
-         trail.printResultByTrail(indent    + 1 if indent >= 0 else indent   ,
-                                  headLevel + 1 if headLevel   else headLevel,
-                                  detail)
+
+         if (param["indent"   ] >= 0):
+            param["indent"  ] = param["indent"   ] + 1
+         if (param["headLevel"] >  0):
+            param["headLeel"] = param["headLevel"] + 1
+         trail.printResultByTrail(param)
          nTrails += 1
 
 ###########################################################################
 
-   def printTrails(self, indent = -1, headLevel = 0, detail = 0):
+   def printTrails(self, param = Param()):
       """
       use: Print list of trails belonging to us
       usage: See TimeSlots.printBids()
       """
+      param = Param(param).default([("indent"   , -1),
+                                    ("headLevel",  0),
+                                    ("detail"   ,  0)])
+
       for trail in self.list:
-         trail.printTrail(indent, detail)
+         trail.printTrail(param["indent"], param["detail"])
 
 ###########################################################################
 
