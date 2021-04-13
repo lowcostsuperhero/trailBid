@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 4 23:35:47 11-Apr-2021 rudyz $
+# name: $Id: hasher.py 5 00:46:19 13-Apr-2021 rudyz $
 
 import csv
 import random
@@ -187,9 +187,9 @@ class Hasher:
          bids = self.bids.getBidsByTimeSlotId(timeSlot.id)
 
          if (param["indent"   ] >= 0):
-            param["indent"  ] = param["indent"   ] + 7
+            param["indent"   ] = param["indent"   ] + 7
          if (param["headLevel"] >  0):
-            param["headLeel"] = param["headLevel"] + 1
+            param["headLevel"] = param["headLevel"] + 1
          bids.printTrails(param)
 
 ###########################################################################
@@ -218,9 +218,9 @@ class Hasher:
       self.printHasher(param)
 
       if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 9
+         param["indent"   ] = param["indent"   ] + 9
       if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
+         param["headLevel"] = param["headLevel"] + 1
       self.successfulBids.printTrails(param)
 
 ###########################################################################

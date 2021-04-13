@@ -1,4 +1,4 @@
-# name: $Id: trail.py 2 23:37:30 11-Apr-2021 rudyz $
+# name: $Id: trail.py 3 00:45:48 13-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -53,6 +53,16 @@ class Trail:
            this trail
       """
       return(self.successfulBids.count)
+
+###################################
+
+   @property
+   def successfulBookendValues(self):
+      """
+      use: Lowest and highest values of successful bids belonging to us
+      post: Return value is a tuple of two element
+      """
+      return(self.successfulBids.bookendValues)
 
 ###################################
 
@@ -172,9 +182,9 @@ class Trail:
       printHeading(self.name, param["indent"], param["headLevel"])
 
       if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 1
+         param["indent"   ] = param["indent"   ] + 1
       if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
+         param["headLevel"] = param["headLevel"] + 1
       self.bids.printHashers(param)
 
 ###########################################################################
@@ -218,25 +228,66 @@ class Trail:
                                     ("detail"   ,  0)])
 
       (lowest, highest) = self.successfulBids.bookendValues
-#       printHeading(self.name + " (" + str(self.successfulBidsCount) + "/" +
-#                                       str(self.capacity) + ") "           +
-#                                str(highest) + " ~ " + str(lowest),
-#                    param["indent"],
-#                    param["headLevel"])
-      printHeading(self.name, param)
-      printHeading("- On trail = " +
-                   str(self.successfulBidsCount) + "/"  +
-                   str(self.capacity)            + "; " +
-                   "bid range = " + str(highest) + "~"  +
-                                    str(lowest),
-                   param["indent"], param["headLevel"])
-      self.successfulBids.sortByHasherName()
 
-      if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 1
-      if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
-      self.successfulBids.printHashers(param)
+      if (param["outputFormat"] == "html"):
+         param["outputFile"] = open(str(self.id) + "-"           +
+                                    self.name.title().
+                                        replace(" ", "").strip() +
+                                    ".html", "w")
+         param["outputFile"].writelines(
+            ["<!DOCTYPE html>\n"                        ,
+             "<html>\n"                                 ,
+             "<head>\n"                                 ,
+             " <style>\n"                               ,
+             "  p.timeslot {font-size: 20px; margin-bottom: 0}\n",
+             "  p.trail    {font-size: 30px;" +
+                          " margin-top: 0; margin-bottom: 5pt}\n",
+             "  table, td  {border: 1px solid black;" +
+                          " border-collapse: collapse}\n",
+             " </style>\n"                              ,
+             " <title>" + str(self) + "</title>\n"      ,
+             "</head>\n"                                ,
+             "\n"                                       ,
+             "<body>\n"                                 ,
+             "<p class=timeslot>" + str(self.timeSlot) + "</p>\n",
+             "<p class=trail><b>" + str(self)             + "</b></p>\n",
+             "<b>Attendance: " + str(self.successfulBidsCount) + "/" +
+                                 str(self.capacity) + "</b><br/><br/>\n" ,
+             ' <table cellpadding=5pt style="width: 7.5in">\n'])
+         param["capacity"] = self.capacity
+         self.successfulBids.sortByHasherName()
+         self.successfulBids.printHashers(param)
+         param["outputFile"].writelines(
+            [" </table>",
+             "</body>\n",
+             "</html>\n"])
+         param["outputFile"].close()
+         param["outputFile"] = None
+      elif (param["outputFormat"] is None):
+#          printHeading(self.name + " (" + str(self.successfulBidsCount) + "/" +
+#                                          str(self.capacity) + ") "           +
+#                                   str(highest) + " ~ " + str(lowest),
+#                       param["indent"],
+#                       param["headLevel"])
+         printHeading(self.name, param)
+         printHeading("- Attendance = " +
+                      str(self.successfulBidsCount) + "/"  +
+                      str(self.capacity)            + "; " +
+                      "bid range = " + str(highest) + "~"  +
+                                       str(lowest),
+                      param["indent"], param["headLevel"])
+         self.successfulBids.sortByHasherName()
+
+         if (param["indent"   ] >= 0):
+            param["indent"   ] = param["indent"   ] + 1
+         if (param["headLevel"] >  0):
+            param["headLevel"] = param["headLevel"] + 1
+         self.successfulBids.printHashers(param)
+      else:
+         sys.stderr.write(selfName                        +
+                          ": Trail.printResultByTrail():" +
+                          " unknown output format: "      +
+                          param["outputFormat"])
 
 ###########################################################################
 
@@ -348,16 +399,6 @@ class Trails:
       use: Number of trails belonging to us
       """
       return(len(self.list))
-
-###################################
-
-   @property
-   def successfulBookendValues(self):
-      """
-      use: Lowest and highest values of successful bids belonging to us
-      post: Return value is a tuple of two element
-      """
-      return(self.successfulBids.bookendValues)
 
 ###########################################################################
 
@@ -473,21 +514,32 @@ class Trails:
            the trail
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      param = Param(param).default("detail",  0)
 
-      nTrails = 0
-      for trail in self.sortBySequence():
-         if (nTrails):
-            print()
+      if (param["outputFormat"] == "html"):
+         for trail in self.sortBySequence():
+            trail.printResultByTrail(param)
+      elif (param["outputFormat"] is None):
+         param.default([("indent"   , -1),
+                        ("headLevel",  0)])
 
          if (param["indent"   ] >= 0):
-            param["indent"  ] = param["indent"   ] + 1
+            param["indent"   ] = param["indent"   ] + 1
          if (param["headLevel"] >  0):
-            param["headLeel"] = param["headLevel"] + 1
-         trail.printResultByTrail(param)
-         nTrails += 1
+            param["headLevel"] = param["headLevel"] + 1
+
+         nTrails = 0
+         for trail in self.sortBySequence():
+            if (nTrails):
+               print()
+
+            trail.printResultByTrail(param)
+            nTrails += 1
+      else:
+         sys.stderr.write(selfName                         +
+                          ": Trails.printResultByTrail():" +
+                          " unknown output format: "       +
+                          param["outputFormat"])
 
 ###########################################################################
 

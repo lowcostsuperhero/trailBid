@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 4 23:45:42 11-Apr-2021 rudyz $
+# name: $Id: trailBid.py 4 00:46:19 13-Apr-2021 rudyz $
 """
 usage: default execution is
           python trailBid.y
@@ -211,10 +211,18 @@ class TrailBid():
       """
       param = Param(param).default("detail", 0)
 
-      printHeading("/// results by trail ///", 0, 1)
-      param.set([("indent"   , 0),
-                 ("headLevel", 2)])
-      self.timeSlots.printResultByTrail(param)
+      if (param["outputFormat"] == "html"):
+         self.timeSlots.printResultByTrail(param)
+      elif (param["outputFormat"] is None):
+         printHeading("/// results by trail ///", 0, 1)
+         param.set([("indent"   , 0),
+                    ("headLevel", 2)])
+         self.timeSlots.printResultByTrail(param)
+      else:
+         sys.stderr.write(selfName                           +
+                          ": TrailBid.printResultByTrail():" +
+                          " unknown output format: "         +
+                          param["outputFormat"])
 
 ###########################################################################
 ###########################################################################
@@ -260,8 +268,7 @@ if ( __name__ == "__main__" ):
       eventDirectory = "event"
 
    if (not os.path.isdir(eventDirectory)):
-      sys.stderr.write(selfName + ": no event directory: " +
-                       eventDirectory)
+      sys.stderr.write(selfName + ": no event directory: " + eventDirectory)
       exit(1)
 
    printHeading("/// settings ///", 0, 1)
@@ -295,6 +302,9 @@ if ( __name__ == "__main__" ):
 
    print()
    trailBid.printResultByTrail(Param("detail", 0))
+   trailBid.printResultByTrail(Param([("detail"      , 0     ),
+                                      ("outputFormat", "html")]))
+
    print()
    trailBid.printResultBySuccessfulHasher(Param("detail", 0))
 

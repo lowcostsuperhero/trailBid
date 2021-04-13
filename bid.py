@@ -1,4 +1,4 @@
-# name: $Id: bid.py 3 23:37:29 11-Apr-2021 rudyz $
+# name: $Id: bid.py 4 00:46:18 13-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -77,13 +77,22 @@ class Bid:
       param = Param(param).default([("indent", -1),
                                     ("detail",  0)])
 
-      if (param["detail"] >= 1):
-         print("".ljust(max(param["indent"], 0))                 +
-               self.hasher.prettyListDisplay() + " ~ "  +
-               "{:>4d}".format(self.value))
+      if (param["outputFormat"] == "html"):
+         param["outputFile"].write("   <td>&EmptySmallSquare;&nbsp;&nbsp;" +
+                                      str(self.hasher) + "</td>\n")
+      elif (param["outputFormat"] is None):
+         if (param["detail"] >= 1):
+            print("".ljust(max(param["indent"], 0))        +
+                  self.hasher.prettyListDisplay() + " ~ "  +
+                  "{:>4d}".format(self.value))
+         else:
+            print("".ljust(max(param["indent"], 0)) +
+                  self.hasher.prettyListDisplay())
       else:
-         print("".ljust(max(param["indent"], 0)) +
-               self.hasher.prettyListDisplay())
+         sys.stderr.write(selfName                      +
+                          ": Bid.printResultByTrail():" +
+                          " unknown output format: "    +
+                          param["outputFormat"])
 
 ###########################################################################
 
@@ -363,11 +372,39 @@ class Bids:
            us
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("deftail"  ,  0)])
-      for bid in self.list:
-         bid.printHasher(param)
+      param = Param(param).default("detail", 0)
+
+      if (param["outputFormat"] == "html"):
+         virtualHasher = hasher_module.Hasher(0, 0, "")
+         virtualBid    = bid_module.Bid(virtualHasher, None, 0)
+         nHasher = 0
+         capacity = param["capacity"]
+         if (capacity is None):
+            capacity = self.count
+         for index in range(0, capacity):
+            if (nHasher == 0):
+               param["outputFile"].write("  <tr>\n")
+            if (index < self.count):
+               self.list[index].printHasher(param)
+            else:
+               virtualHasher.id = index + 1
+               virtualBid.printHasher(param)
+            nHasher += 1
+            if ((nHasher % 3) == 0):
+               param["outputFile"].write("  </tr>\n")
+               nHasher = 0
+         if (nHasher != 0):
+            param["outputFile"].write("  </tr>\n")
+      elif (param["outputFormat"] is None):
+         param.default([("indent"   , -1),
+                        ("headLevel",  0)])
+         for bid in self.list:
+            bid.printHasher(param)
+      else:
+         sys.stderr.write(selfName                       +
+                          ": Bids.printResultByTrail():" +
+                          " unknown output format: "     +
+                          param["outputFormat"])
 
 ###########################################################################
 

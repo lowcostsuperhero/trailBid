@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 2 23:37:30 11-Apr-2021 rudyz $
+# name: $Id: timeSlot.py 3 00:46:19 13-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -103,9 +103,9 @@ class TimeSlot:
       printHeading(str(self), indent, headLevel)
 
       if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 1
+         param["indent"   ] = param["indent"   ] + 1
       if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
+         param["headLevel"] = param["headLevel"] + 1
       self.trails.printBids(param)
 
 ###########################################################################
@@ -123,9 +123,9 @@ class TimeSlot:
       printHeading(str(self), indent, headLevel)
 
       if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 1
+         param["indent"   ] = param["indent"   ] + 1
       if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
+         param["headLevel"] = param["headLevel"] + 1
       self.trails.printHashers(param)
 
 ###########################################################################
@@ -142,9 +142,9 @@ class TimeSlot:
       printHeading(str(self), param["indent"], param["headLevel"])
 
       if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 1
+         param["indent"   ] = param["indent"   ] + 1
       if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
+         param["headLevel"] = param["headLevel"] + 1
       self.trails.printTrails(param)
 
 ###########################################################################
@@ -156,18 +156,26 @@ class TimeSlot:
       usage: See TimeSlots.printBids()
       pre: runBid() processing must be completed
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      param = Param(param).default("detail",  0)
 
-      printHeading(str(self), param)
+      if (param["outputFormat"] == "html"):
+         self.trails.printResultByTrail(param)
+      elif (param["outputFormat"] is None):
+         param.default([("indent"   , -1),
+                        ("headLevel",  0)])
 
-      if (param["indent"   ] >= 0):
-         param["indent"  ] = param["indent"   ] + 1
-      if (param["headLevel"] >  0):
-         param["headLeel"] = param["headLevel"] + 1
+         printHeading(str(self), param)
 
-      self.trails.printResultByTrail(param)
+         if (param["indent"   ] >= 0):
+            param["indent"   ] = param["indent"   ] + 1
+         if (param["headLevel"] >  0):
+            param["headLevel"] = param["headLevel"] + 1
+         self.trails.printResultByTrail(param)
+      else:
+         sys.stderr.write(selfName                           +
+                          ": TimeSlot.printResultByTrail():" +
+                          " unknown output format: "         +
+                          param["outputFormat"])
 
 ###########################################################################
 
@@ -345,18 +353,27 @@ class TimeSlots:
            the hashers with a successful bid for the trail
       pre: runBid() processing must be completed
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      param = Param(param).default("detail",  0)
 
       self.sortBySequence()
-      nTimeSlots = 0
-      for timeSlot in self.list:
-         if (nTimeSlots):
-            print()
-            print()
-         timeSlot.printResultByTrail(param)
-         nTimeSlots += 1
+      if (param["outputFormat"] == "html"):
+         for timeSlot in self.list:
+            timeSlot.printResultByTrail(param)
+      elif (param["outputFormat"] is None):
+         param.default([("indent"   , -1),
+                        ("headLevel",  0)])
+         nTimeSlots = 0
+         for timeSlot in self.list:
+            if (nTimeSlots):
+               print()
+               print()
+            timeSlot.printResultByTrail(param)
+            nTimeSlots += 1
+      else:
+         sys.stderr.write(selfName                            +
+                          ": TimeSlots.printResultByTrail():" +
+                          " unknown output format: "          +
+                          param["outputFormat"])
 
 ###########################################################################
 
