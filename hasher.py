@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 5 00:46:19 13-Apr-2021 rudyz $
+# name: $Id: hasher.py 6 01:19:25 13-Apr-2021 rudyz $
 
 import csv
 import random
@@ -120,11 +120,16 @@ class Hasher:
       use: Print explanation of outcome of bids submitted by hasher
       """
       print(str(self))
+      self.bids.sortByTrail()
+      timeSlot = None
       for bid in self.bids:
+         if (bid.timeSlot != timeSlot):
+            print("  " + bid.timeSlot.name)
+            timeSlot = bid.timeSlot
          (loBid, hiBid) = bid.trail.successfulBookendValues
          wonTrail       = self.successfulBids.getBidsByTrailId(bid.trail.id)
          if (wonTrail.count > 0):
-            outcome = "* WON *"
+            outcome = "* WIN *"
          else:
             if (bid.value == loBid):
                outcome = "Lost tie-breaker"
@@ -133,15 +138,15 @@ class Hasher:
                            bid.trail.timeSlot.id)
                if (trails.count > 0):
                   trail = trails[0]
-                  outcome = "Won:" + str(trail.id)
+                  outcome = "Won: " + str(trail.id)
                else:
                   outcome = "Loss unexpected"
             else:
                outcome = "Lost"
-         print("  {} {:>5d}~{:<5d} | {:>5d} {}".format(
-                  bid.trail.prettyListDisplay(),
-                  hiBid, loBid, bid.value      ,
-                  outcome))
+         print("    {} {:>5d}~{:<5d} | {:>5d} {}".format(
+                    bid.trail.prettyListDisplay(),
+                    hiBid, loBid, bid.value      ,
+                    outcome))
 
 ###########################################################################
 

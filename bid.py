@@ -1,4 +1,4 @@
-# name: $Id: bid.py 4 00:46:18 13-Apr-2021 rudyz $
+# name: $Id: bid.py 5 01:19:24 13-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -440,6 +440,18 @@ class Bids:
       self.list.sort(key = lambda bid:(bid.hasher.name,
                                        bid.hasher.id))
       return(self.list)
+
+###########################################################################
+
+   def sortByTrail(self):
+      """
+      use: Sort our list of bids according each bid's trail's time slot
+           sequence and trail sequence
+      post: Our internal array of bids is re-ordered and sorted by each
+            bid's trail's time slot sequence and trail sequence
+      """
+      self.list.sort(key = lambda bid:(bid.trail.timeSlot.sequence,
+                                       bid.trail.sequence))
 
 ###########################################################################
 
