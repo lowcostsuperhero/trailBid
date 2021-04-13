@@ -400,6 +400,16 @@ class Trails:
       """
       return(len(self.list))
 
+###################################
+
+   @property
+   def successfulBookendValues(self):
+      """
+      use: Lowest and highest values of successful bids belonging to us
+      post: Return value is a tuple of two element
+      """
+      return(self.successfulBids.bookendValues)
+
 ###########################################################################
 
    def add(self, trail):
