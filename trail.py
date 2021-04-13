@@ -1,4 +1,4 @@
-# name: $Id: trail.py 3 00:45:48 13-Apr-2021 rudyz $
+# name: $Id: trail.py 6 01:18:39 13-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -235,24 +235,24 @@ class Trail:
                                         replace(" ", "").strip() +
                                     ".html", "w")
          param["outputFile"].writelines(
-            ["<!DOCTYPE html>\n"                        ,
-             "<html>\n"                                 ,
-             "<head>\n"                                 ,
-             " <style>\n"                               ,
-             "  p.timeslot {font-size: 20px; margin-bottom: 0}\n",
-             "  p.trail    {font-size: 30px;" +
-                          " margin-top: 0; margin-bottom: 5pt}\n",
-             "  table, td  {border: 1px solid black;" +
-                          " border-collapse: collapse}\n",
-             " </style>\n"                              ,
-             " <title>" + str(self) + "</title>\n"      ,
-             "</head>\n"                                ,
-             "\n"                                       ,
-             "<body>\n"                                 ,
-             "<p class=timeslot>" + str(self.timeSlot) + "</p>\n",
-             "<p class=trail><b>" + str(self)             + "</b></p>\n",
-             "<b>Attendance: " + str(self.successfulBidsCount) + "/" +
-                                 str(self.capacity) + "</b><br/><br/>\n" ,
+            ["<!DOCTYPE html>\n"                                           ,
+             "<html>\n"                                                    ,
+             "<head>\n"                                                    ,
+             " <style>\n"                                                  ,
+             "  p.timeslot {font-size: 20px; margin-bottom: 0}\n"          ,
+             "  p.trail    {font-size: 30px;"          +
+                          " margin-top: 0; margin-bottom: 5pt}\n"          ,
+             "  table, td  {border: 1px solid black;"  +
+                          " border-collapse: collapse}\n"                  ,
+             " </style>\n"                                                 ,
+             " <title>" + str(self) + "</title>\n"                         ,
+             "</head>\n"                                                   ,
+             "\n"                                                          ,
+             "<body>\n"                                                    ,
+             "<p class=timeslot>" + self.timeSlot.name + "</p>\n"          ,
+             "<p class=trail><b>" + str(self)          + "</b></p>\n"      ,
+             "<b>Attendance: "    + str(self.successfulBidsCount) + "/" +
+                                    str(self.capacity) + "</b><br/><br/>\n",
              ' <table cellpadding=5pt style="width: 7.5in">\n'])
          param["capacity"] = self.capacity
          self.successfulBids.sortByHasherName()
