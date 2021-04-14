@@ -1,4 +1,4 @@
-# name: $Id: trail.py 6 01:18:39 13-Apr-2021 rudyz $
+# name: $Id: trail.py 7 23:45:07 13-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -230,10 +230,15 @@ class Trail:
       (lowest, highest) = self.successfulBids.bookendValues
 
       if (param["outputFormat"] == "html"):
-         param["outputFile"] = open(str(self.id) + "-"           +
-                                    self.name.title().
-                                        replace(" ", "").strip() +
-                                    ".html", "w")
+         outputDirectory = os.path.join(settings["eventDirectory"], "html")
+         if (not os.path.isdir(outputDirectory)):
+            os.mkdir(outputDirectory)
+         outputFile = os.path.join(
+                         outputDirectory,
+                         str(self.id) + "-"                            +
+                            self.name.title().replace(" ", "").strip() +
+                            ".html")
+         param["outputFile"] = open(outputFile, "w")
          param["outputFile"].writelines(
             ["<!DOCTYPE html>\n"                                           ,
              "<html>\n"                                                    ,

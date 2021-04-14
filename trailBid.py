@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 4 00:46:19 13-Apr-2021 rudyz $
+# name: $Id: trailBid.py 5 23:45:07 13-Apr-2021 rudyz $
 """
 usage: default execution is
           python trailBid.y
@@ -272,6 +272,7 @@ if ( __name__ == "__main__" ):
       exit(1)
 
    printHeading("/// settings ///", 0, 1)
+   settings["eventDirectory"] = eventDirectory
    settings.readFile(eventDirectory)
 
    settings.setDefault("bidAllowance", 100)
