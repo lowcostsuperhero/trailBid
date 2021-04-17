@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 6 01:19:25 13-Apr-2021 rudyz $
+# name: $Id: hasher.py 7 16:11:26 17-Apr-2021 rudyz $
 
 import csv
 import random
@@ -144,8 +144,8 @@ class Hasher:
             else:
                outcome = "Lost"
          print("    {} {:>5d}~{:<5d} | {:>5d} {}".format(
-                    bid.trail.prettyListDisplay(),
-                    hiBid, loBid, bid.value      ,
+                    bid.trail.pretty()     ,
+                    hiBid, loBid, bid.value,
                     outcome))
 
 ###########################################################################
@@ -162,7 +162,7 @@ class Hasher:
 
 ###########################################################################
 
-   def prettyListDisplay(self):
+   def pretty(self):
       """
       use: A prettily formatted ID and name suitable for display in a list
            of hashers
@@ -178,55 +178,84 @@ class Hasher:
 
 ###########################################################################
 
-   def printBids(self, param = Param()):
+   def printBids(self, params = Params()):
       """
       use: Print all bids submitted by hasher
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
-      print("".ljust(max(param["indent"], 0)) + self.prettyListDisplay())
+      print("".ljust(max(params["indent"], 0)) + self.pretty())
       for timeSlot in self.bids.getTimeSlots().sortBySequence():
          bids = self.bids.getBidsByTimeSlotId(timeSlot.id)
 
-         if (param["indent"   ] >= 0):
-            param["indent"   ] = param["indent"   ] + 7
-         if (param["headLevel"] >  0):
-            param["headLevel"] = param["headLevel"] + 1
-         bids.printTrails(param)
+         if (params["indent"   ] >= 0):
+            params["indent"   ] = params["indent"   ] + 7
+         if (params["headLevel"] >  0):
+            params["headLevel"] = params["headLevel"] + 1
+         bids.printTrails(params)
 
 ###########################################################################
 
-   def printHasher(self, param):
+   def print(self, params):
       """
       use: Print hasher's ID and name
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([('indent'   , -1),
-                                    ('headLevel',  0),
-                                    ('detail'   ,  0)])
+      params = Params(params).default([('indent'   , -1),
+                                       ('headLevel',  0),
+                                       ('detail'   ,  0)])
+      params[self.__class__.__name__] = self
 
-      print("".ljust(max(param["indent"], 0)) + self.prettyListDisplay())
+      if (params["outputFormat"] == "roster"):
+#          params["outputFile"].writelines(
+#             ["   <td>&EmptySmallSquare;&nbsp;&nbsp;" +
+#                     "&EmptySmallSquare;&nbsp;&nbsp;\n",
+#              "     " + str(self.hasher) + "\n"  ,
+#              "   </td>\n"])
+         params["outputFile"].writelines(
+            ["   <td>\n"                                   ,
+             "    <div class=left>\n"                      ,
+             "      &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n",
+             "      " + str(self) + "\n"                   ,
+             "    </div>\n"                                ,
+             "    <div class=right>\n"                     ,
+             "     &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n" ,
+             "    </div>\n"                                ,
+             "   </td>\n"])
+      elif (params["outputFormat"] == "html"):
+         params["outputFile"].write("   <td>" + str(self) + "</td>\n")
+      elif (params["outputFormat"] is None):
+         print("".ljust(max(params["indent"], 0)) +
+               self.pretty())
+      else:
+         sys.stderr.write(selfName                      +
+                          ": Hasher.print():" +
+                          " unknown output format: "    +
+                          params["outputFormat"])
 
 ###########################################################################
 
-   def printResultByHasher(self, param = Param()):
+   def printResultByHasher(self, params = Params()):
       """
       use: Print successful bids submitted by hasher
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([('indent'   , -1),
-                                    ('headLevel',  0),
-                                    ('detail'   ,  0)])
-      self.printHasher(param)
+      params = Params(params).default([('indent'   , -1),
+                                       ('headLevel',  0),
+                                       ('detail'   ,  0)])
+      params[self.__class__.__name__] = self
 
-      if (param["indent"   ] >= 0):
-         param["indent"   ] = param["indent"   ] + 9
-      if (param["headLevel"] >  0):
-         param["headLevel"] = param["headLevel"] + 1
-      self.successfulBids.printTrails(param)
+      self.print(params)
+
+      if (params["indent"   ] >= 0):
+         params["indent"   ] = params["indent"   ] + 9
+      if (params["headLevel"] >  0):
+         params["headLevel"] = params["headLevel"] + 1
+      self.successfulBids.printTrails(params)
 
 ###########################################################################
 ###########################################################################
@@ -328,34 +357,37 @@ class Hashers:
 
 ###########################################################################
 
-   def printBids(self, param = Param()):
+   def printBids(self, params = Params()):
       """
       use: Print list of bids submitted by hashers belonging to us
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
+
       for hasher in self.list:
-         hasher.printBids(param)
+         hasher.printBids(params)
 
 ###########################################################################
 
-   def printHashers(self, param = Param()):
+   def printHashers(self, params = Params()):
       """
       use: Print list of hashers belonging to us
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       for hasher in self.list:
-         hasher.printHasher(param)
+         hasher.printHasher(params)
 
 ###########################################################################
 
-   def printResultByHasher(self, param = Param()):
+   def printResultByHasher(self, params = Params()):
       """
       use: Print list of hashers belonging to us. If the hasher has one
            or more successful bids for trail, the trail information will
@@ -363,68 +395,72 @@ class Hashers:
       usage: See TimeSlots.printBids()
       pre: runBid() processing must be completed
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       self.sortByName()
       for hasher in self.list:
-         hasher.printResultByHasher(param)
+         hasher.printResultByHasher(params)
 
 ###########################################################################
 
-   def printResultBySuccessfulHasher(self, param = Param()):
+   def printResultBySuccessfulHasher(self, params = Params()):
       """
       use: For every hasher with a successful bid for a trail, print the
            hasher and trail information of the successful bid
       usage: See TimeSlots.printBids()
       pre: runBid() processing must be completed
       """
-      param = Param(param).default([('indent'   , -1),
-                                    ('headLevel',  0),
-                                    ('detail'   ,  0)])
+      params = Params(params).default([('indent'   , -1),
+                                       ('headLevel',  0),
+                                       ('detail'   ,  0)])
+      params[self.__class__.__name__] = self
 
       self.sortByName()
       for hasher in self.list:
          if (hasher.successfulBidCount > 0):
-            hasher.printResultByHasher(param)
+            hasher.printResultByHasher(params)
 
 ###########################################################################
 
-   def printResultByUnsuccessfulHasher(self, param = Param()):
+   def printResultByUnsuccessfulHasher(self, params = Params()):
       """
       use: For every hasher with a bid for a trail but was unsuccessful
            on all bids, print the hasher
       usage: See TimeSlots.printBids()
       pre: runBid() processing must be completed
       """
-      param = Param(param).default([('indent'   , -1),
-                                    ('headLevel',  0),
-                                    ('detail'   ,  0)])
+      params = Params(params).default([('indent'   , -1),
+                                       ('headLevel',  0),
+                                       ('detail'   ,  0)])
+      params[self.__class__.__name__] = self
 
       self.sortByName()
       for hasher in self.list:
          if ((hasher.bidCount            > 0) and
              (hasher.successfulBidCount == 0)):
-            hasher.printResultByHasher(param)
+            hasher.printResultByHasher(params)
 
 ###########################################################################
 
-   def printResultByNoBidHasher(self, param = Param()):
+   def printResultByNoBidHasher(self, params = Params()):
       """
       use: For every hasher without any bids for a trail, print the
            hasher
       usage: See TimeSlots.printBids()
       pre: runBid() processing should be completed
       """
-      param = Param(param).default([('indent'   , -1),
-                                    ('headLevel',  0),
-                                    ('detail'   ,  0)])
+      params = Params(params).default([('indent'   , -1),
+                                       ('headLevel',  0),
+                                       ('detail'   ,  0)])
+      params[self.__class__.__name__] = self
 
       self.sortByName()
       for hasher in self.list:
          if (hasher.bidCount == 0):
-            hasher.printResultByHasher(param)
+            hasher.printResultByHasher(params)
 
 ###########################################################################
 

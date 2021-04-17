@@ -1,14 +1,14 @@
-# named: $Id: param.py 1 23:35:03 11-Apr-2021 rudyz $
+# named: $Id: param.py 2 16:11:27 17-Apr-2021 rudyz $
 
 """
 use: Generic object based construct for passing variable number of
      arguments instead of **kwargs
-usage: Although a Param() object is passed by value, data belonging to
-       the param object is effectively passed by reference. If changes
-       are intended to be made to the param values, the param objects
-       should probably be shallow copied by the Param class's
+usage: Although a Params() object is passed by value, data belonging to
+       the params object is effectively passed by reference. If changes
+       are intended to be made to the params values, the params objects
+       should probably be shallow copied by the Params class's
        constructor behaving as a copy constructor by passing it an
-       existting Param object
+       existting Params object
 imp: Implemented as a key-value pair dictionary
 """
 
@@ -22,13 +22,13 @@ imp: Implemented as a key-value pair dictionary
 ###########################################################################
 ###########################################################################
 
-class Param:
+class Params:
    def __init__(self, key = None, value = None):
       """
       use: A case-sensitive dictionary of key-value pairs that can be
            passed to functions, procedures, and methods varargs without
            involving **kwargs
-      usage: In the simplest form, a blank Param object can be
+      usage: In the simplest form, a blank Params object can be
              constructed with no arguments, otherwise, see set()
              method
       """
@@ -73,7 +73,7 @@ class Param:
       usage: A single key value can be set by passing a key and value.
              Multiple key-value pairs can get set by passing an array
              of two-element tuples consisting of a key and value.
-             Finally another Param object can be passed in which case
+             Finally another Params object can be passed in which case
              a shallow copy of the passed object will be made
       """
       if (key is not None):
@@ -82,7 +82,7 @@ class Param:
                self.list[key] = value
             elif (key in self.list):
                del(self.list[key])
-         elif (isinstance(key, Param)):
+         elif (isinstance(key, Params)):
             self.list = key.list.copy()
          else:
             for (k, v) in key:

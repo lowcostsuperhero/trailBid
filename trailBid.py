@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 5 23:45:07 13-Apr-2021 rudyz $
+# name: $Id: trailBid.py 6 16:11:28 17-Apr-2021 rudyz $
 """
 usage: default execution is
           python trailBid.y
@@ -87,34 +87,34 @@ class TrailBid():
       if (settings["verbosity"] >= 2):
          print()
          printHeading("/// time slot trails ///", 0, 1)
-         self.timeSlots.printTrails(Param([("indent"   , 0),
-                                           ("headLevel", 2),
-                                           ("detail"   , 2)]))
+         self.timeSlots.printTrails(Params([("indent"   , 0),
+                                            ("headLevel", 2),
+                                            ("detail"   , 2)]))
       if (settings["verbosity"] >= 3):
          print()
          printHeading("/// time slot bids ///", 0, 1)
-         self.timeSlots.printBids(Param([("indent"     , 0),
-                                           ("headLevel", 2),
-                                           ("detail"   , 1)]))
+         self.timeSlots.printBids(Params([("indent"     , 0),
+                                          ("headLevel", 2),
+                                          ("detail"   , 1)]))
       if (settings["verbosity"] >= 3):
          print()
          printHeading("/// time slot hashers ///", 0, 1)
-         self.timeSlots.printHashers(Param([("indent"   , 0),
-                                            ("headLevel", 2),
-                                            ("detail"   , 1)]))
+         self.timeSlots.printHashers(Params([("indent"   , 0),
+                                             ("headLevel", 2),
+                                             ("detail"   , 1)]))
       if (settings["verbosity"] >= 3):
          print()
          printHeading("/// time slot unique hashers ///", 0, 1)
          for timeSlot in self.timeSlots:
             printHeading(str(timeSlot), indent = 0, headLevel = 2)
-            timeSlot.getHashers().printHashers(Param([("indent"   , 1),
-                                                      ("headLevel", 3),
-                                                      ("detail"   , 1)]))
+            timeSlot.getHashers().printHashers(Params([("indent"   , 1),
+                                                       ("headLevel", 3),
+                                                       ("detail"   , 1)]))
 
       if (settings["verbosity"] >= 3):
          print()
          printHeading("/// hasher bids ///", 0, 1)
-         self.hashers.printBids(Param("indent", 0))
+         self.hashers.printBids(Params("indent", 0))
 
 ###########################################################################
 
@@ -141,88 +141,91 @@ class TrailBid():
 
 ###########################################################################
 
-   def printResultByHasher(self, param = Param()):
+   def printResultByHasher(self, params = Params()):
       """
       use: For every hasher who has submiited one or more bids, print the
            hasher and trail information of the successful bids
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail", 0)
+      params = Params(params).default("detail", 0)
 
-      param.set()
+      params.set()
       printHeading("/// results by hasher ///", 0, 1)
       self.hashers.printResultByHasher( # detail: 0=bare; 1=show bid value
                       indent = 0, headLevel = 2, detail = detail)
 
 ###########################################################################
 
-   def printResultBySuccessfulHasher(self, param = Param()):
+   def printResultBySuccessfulHasher(self, params = Params()):
       """
       use: For every hasher with at least one successful bid, print the
            hasher and trail information of the successful bids
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail", 0)
+      params = Params(params).default("detail", 0)
 
       printHeading("/// results by successful hasher ///", 0, 1)
 
-      param.set([("indent"   , 0),
-                 ("headLevel", 2)])
-      self.hashers.printResultBySuccessfulHasher(param)
+      params.set([("indent"   , 0),
+                  ("headLevel", 2)])
+      self.hashers.printResultBySuccessfulHasher(params)
 
 ###########################################################################
 
-   def printResultByUnsuccessfulHasher(self, param = Param()):
+   def printResultByUnsuccessfulHasher(self, params = Params()):
       """
       use: For every hasher who has submitted at least one bid but was
            unsuccessful on all submitted bids, print the hasher
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail", 0)
+      params = Params(params).default("detail", 0)
 
       printHeading("/// results by unsuccessful hasher ///", 0, 1)
 
-      param.set([("indent"   , 0),
-                 ("headLevel", 2)])
-      self.hashers.printResultByUnsuccessfulHasher(param)
+      params.set([("indent"   , 0),
+                  ("headLevel", 2)])
+      self.hashers.printResultByUnsuccessfulHasher(params)
 
 ###########################################################################
 
-   def printResultByNoBidHasher(self, param = Param()):
+   def printResultByNoBidHasher(self, params = Params()):
       """
       use: For every hasher without any bids for any trails, print the
            hasher
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail", 0)
+      params = Params(params).default("detail", 0)
 
       printHeading("/// hashers with no bids ///", 0, 1)
-      param.set([("indent"   , 0),
-                 ("headLevel", 2)])
-      self.hashers.printResultByNoBidHasher(param)
+      params.set([("indent"   , 0),
+                  ("headLevel", 2)])
+      self.hashers.printResultByNoBidHasher(params)
 
 ###########################################################################
 
-   def printResultByTrail(self, param = Param()):
+   def printResultByTrail(self, params = Params()):
       """
       use: For each time slot, print list of trails and the hashers with
            a successful bid for the trail
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail", 0)
+      params = Params(params).default("detail", 0)
+      params[self.__class__.__name__] = self
 
-      if (param["outputFormat"] == "html"):
-         self.timeSlots.printResultByTrail(param)
-      elif (param["outputFormat"] is None):
+      if (params["outputFormat"] in ("roster", "html")):
+                                # timeSlots.trails.trail.successfulBids.
+                                # bid.hasher.print
+         self.timeSlots.printResultByTrail(params)
+      elif (params["outputFormat"] is None):
          printHeading("/// results by trail ///", 0, 1)
-         param.set([("indent"   , 0),
-                    ("headLevel", 2)])
-         self.timeSlots.printResultByTrail(param)
+         params.set([("indent"   , 0),
+                     ("headLevel", 2)])
+         self.timeSlots.printResultByTrail(params)
       else:
          sys.stderr.write(selfName                           +
                           ": TrailBid.printResultByTrail():" +
                           " unknown output format: "         +
-                          param["outputFormat"])
+                          params["outputFormat"])
 
 ###########################################################################
 ###########################################################################
@@ -293,26 +296,28 @@ if ( __name__ == "__main__" ):
       print()
       printHeading("/// ranked bids ///", 0, 1)
       for timeSlot in trailBid.timeSlots:
-         print(timeSlot.prettyListDisplay())
+         print(timeSlot.pretty())
          timeSlot.getBids().sortEquitably().printBids(
-                                               Param([("indent"   , 0),
-                                                      ("headLevel", 2),
-                                                      ("detail"   , 1)]))
+                                               Params([("indent"   , 0),
+                                                       ("headLevel", 2),
+                                                       ("detail"   , 1)]))
 
 ###########################################################################
 
    print()
-   trailBid.printResultByTrail(Param("detail", 0))
-   trailBid.printResultByTrail(Param([("detail"      , 0     ),
-                                      ("outputFormat", "html")]))
+   trailBid.printResultByTrail(Params("detail", 0))
+   trailBid.printResultByTrail(Params([("detail"      , 0       ),
+                                       ("outputFormat", "html"  )]))
+   trailBid.printResultByTrail(Params([("detail"      , 0       ),
+                                       ("outputFormat", "roster")]))
 
    print()
-   trailBid.printResultBySuccessfulHasher(Param("detail", 0))
+   trailBid.printResultBySuccessfulHasher(Params("detail", 0))
 
    print()
-   trailBid.printResultByUnsuccessfulHasher(Param("detail", 0))
+   trailBid.printResultByUnsuccessfulHasher(Params("detail", 0))
 
    print()
-   trailBid.printResultByNoBidHasher(Param("detail", 0))
+   trailBid.printResultByNoBidHasher(Params("detail", 0))
 
 ###########################################################################

@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 3 00:46:19 13-Apr-2021 rudyz $
+# name: $Id: timeSlot.py 4 16:11:27 17-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -74,7 +74,7 @@ class TimeSlot:
 
 ###########################################################################
 
-   def prettyListDisplay(self):
+   def pretty(self):
       """
       use: A prettily formatted ID and name suitable for display in a list
            of time slots
@@ -83,11 +83,12 @@ class TimeSlot:
 
 ###########################################################################
 
-   def printBids(self, param = Param()):
+   def printBids(self, params = Params()):
       """
       use: Print list of all bids submitted for trails in this time slot
-      usage: Optionally pass integer values for indent, headLevel, and
-             detail:
+      usage: Optionally pass additional arguments in the Params() object.
+             The optional arguments are integer values for indent,
+             headLevel, and detail:
                 indent   : negative indent values prevents indenting by
                            child print*() methods we call
                 headLevel: similar to HTML H1, H2, H3 tags, with lower
@@ -96,86 +97,90 @@ class TimeSlot:
                 detail   : greater values of detail provide more details in
                            the print*() output
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       printHeading(str(self), indent, headLevel)
 
-      if (param["indent"   ] >= 0):
-         param["indent"   ] = param["indent"   ] + 1
-      if (param["headLevel"] >  0):
-         param["headLevel"] = param["headLevel"] + 1
-      self.trails.printBids(param)
+      if (params["indent"   ] >= 0):
+         params["indent"   ] = params["indent"   ] + 1
+      if (params["headLevel"] >  0):
+         params["headLevel"] = params["headLevel"] + 1
+      self.trails.printBids(params)
 
 ###########################################################################
 
-   def printHashers(self, param = Param()):
+   def printHashers(self, params = Params()):
       """
       use: Print list of all unique hashers who have submitted a bid for
            trails in this time slot
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       printHeading(str(self), indent, headLevel)
 
-      if (param["indent"   ] >= 0):
-         param["indent"   ] = param["indent"   ] + 1
-      if (param["headLevel"] >  0):
-         param["headLevel"] = param["headLevel"] + 1
-      self.trails.printHashers(param)
+      if (params["indent"   ] >= 0):
+         params["indent"   ] = params["indent"   ] + 1
+      if (params["headLevel"] >  0):
+         params["headLevel"] = params["headLevel"] + 1
+      self.trails.printHashers(params)
 
 ###########################################################################
 
-   def printTrails(self, param = Param()):
+   def printTrails(self, params = Params()):
       """
       use: Print list of all trails within this time slot
       usage: See TimeSlots.printBids()
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
-      printHeading(str(self), param["indent"], param["headLevel"])
+      printHeading(str(self), params["indent"], params["headLevel"])
 
-      if (param["indent"   ] >= 0):
-         param["indent"   ] = param["indent"   ] + 1
-      if (param["headLevel"] >  0):
-         param["headLevel"] = param["headLevel"] + 1
-      self.trails.printTrails(param)
+      if (params["indent"   ] >= 0):
+         params["indent"   ] = params["indent"   ] + 1
+      if (params["headLevel"] >  0):
+         params["headLevel"] = params["headLevel"] + 1
+      self.trails.printTrails(params)
 
 ###########################################################################
 
-   def printResultByTrail(self, param = Param()):
+   def printResultByTrail(self, params = Params()):
       """
       use: Print list of trails within this time slot, and list of hashers
            with a successful bid for the trail
       usage: See TimeSlots.printBids()
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail",  0)
+      params = Params(params).default("detail",  0)
+      params[self.__class__.__name__] = self
 
-      if (param["outputFormat"] == "html"):
-         self.trails.printResultByTrail(param)
-      elif (param["outputFormat"] is None):
-         param.default([("indent"   , -1),
-                        ("headLevel",  0)])
+      if (params["outputFormat"] in ("roster", "html")):
+         self.trails.printResultByTrail(params)
+      elif (params["outputFormat"] is None):
+         params.default([("indent"   , -1),
+                         ("headLevel",  0)])
 
-         printHeading(str(self), param)
+         printHeading(str(self), params)
 
-         if (param["indent"   ] >= 0):
-            param["indent"   ] = param["indent"   ] + 1
-         if (param["headLevel"] >  0):
-            param["headLevel"] = param["headLevel"] + 1
-         self.trails.printResultByTrail(param)
+         if (params["indent"   ] >= 0):
+            params["indent"   ] = params["indent"   ] + 1
+         if (params["headLevel"] >  0):
+            params["headLevel"] = params["headLevel"] + 1
+         self.trails.printResultByTrail(params)
       else:
          sys.stderr.write(selfName                           +
                           ": TimeSlot.printResultByTrail():" +
                           " unknown output format: "         +
-                          param["outputFormat"])
+                          params["outputFormat"])
 
 ###########################################################################
 
@@ -183,7 +188,7 @@ class TimeSlot:
       """
       use: Process the bids submitted for trails within this time slot
       """
-      print(self.prettyListDisplay())
+      print(self.pretty())
       bids = bid_module.Bids()
                                 # get a list of all bids from all trails in
                                 # this time slot because each hasher can
@@ -300,80 +305,84 @@ class TimeSlots:
 
 ###########################################################################
 
-   def printBids(self, param = Param()):
+   def printBids(self, params = Params()):
       """
       use: Print list of bids that have been submitted for trails within
            time slots belonging to us
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       for timeSlot in self.list:
-         timeSlot.printBids(param)
+         timeSlot.printBids(params)
 
 ###########################################################################
 
-   def printHashers(self, param = Param()):
+   def printHashers(self, params = Params()):
       """
       use: Print list of hashers who have submitted bids for trails in
            time slots belonging to us
       """
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       nTimeSlot = 0
       for timeSlot in self.list:
          if (nTimeSlot):
             print()
-         timeSlot.printHashers(indent, param["headLevel"], param["detail"])
+         timeSlot.printHashers(indent, params["headLevel"], params["detail"])
          nTimeSlot += 1
 
 ###########################################################################
 
-   def printTrails(self, param = Param()):
+   def printTrails(self, params = Params()):
       """use: Print list of trails in our time slots"""
-      param = Param(param).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(params).default([("indent"   , -1),
+                                       ("headLevel",  0),
+                                       ("detail"   ,  0)])
+      params[self.__class__.__name__] = self
 
       nTimeSlots = 0
       for timeSlot in self.list:
          if (nTimeSlots):
             print()
-         timeSlot.printTrails(param)
+         timeSlot.printTrails(params)
          nTimeSlots += 1
 
 ###########################################################################
 
-   def printResultByTrail(self, param = Param):
+   def printResultByTrail(self, params = Params):
       """
       use: For each time slot belonging to us, print list of trails and
            the hashers with a successful bid for the trail
       pre: runBid() processing must be completed
       """
-      param = Param(param).default("detail",  0)
+      params = Params(params).default("detail",  0)
+      params[self.__class__.__name__] = self
 
       self.sortBySequence()
-      if (param["outputFormat"] == "html"):
+      if (params["outputFormat"] in ("roster", "html")):
          for timeSlot in self.list:
-            timeSlot.printResultByTrail(param)
-      elif (param["outputFormat"] is None):
-         param.default([("indent"   , -1),
+            timeSlot.printResultByTrail(params)
+      elif (params["outputFormat"] is None):
+         params.default([("indent"   , -1),
                         ("headLevel",  0)])
          nTimeSlots = 0
          for timeSlot in self.list:
             if (nTimeSlots):
                print()
                print()
-            timeSlot.printResultByTrail(param)
+            timeSlot.printResultByTrail(params)
             nTimeSlots += 1
       else:
          sys.stderr.write(selfName                            +
                           ": TimeSlots.printResultByTrail():" +
                           " unknown output format: "          +
-                          param["outputFormat"])
+                          params["outputFormat"])
 
 ###########################################################################
 
