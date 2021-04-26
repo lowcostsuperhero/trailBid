@@ -1,4 +1,4 @@
-# name: $Id: trail.py 9 20:39:04 25-Apr-2021 rudyz $
+# name: $Id: trail.py 10 00:36:07 26-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -204,7 +204,8 @@ class Trail:
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "html"):
-         params["outputFile"].write(self.pretty() + "<br/>")
+         nbsp = "&nbsp;" * (params["indent"] or 0)
+         params["outputFile"].write("    " + nbsp + str(self) + "<br/>\n")
       elif (params["outputFormat"] is None):
          if (params["detail"] >= 2):
             print("".ljust(max(params["indent"], 0)) +

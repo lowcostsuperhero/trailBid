@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 7 20:44:05 25-Apr-2021 rudyz $
+# name: $Id: trailBid.py 8 00:36:01 26-Apr-2021 rudyz $
 """
 usage: default execution is
           python trailBid.y
@@ -151,6 +151,7 @@ class TrailBid():
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "html"):
+         params.set("indent", 0)
          self.hashers.printResultByHasher(params)
       elif (params["outputFormat"] is None):
                                 # hashers.hasher

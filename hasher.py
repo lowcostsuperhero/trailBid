@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 8 20:43:58 25-Apr-2021 rudyz $
+# name: $Id: hasher.py 9 00:36:07 26-Apr-2021 rudyz $
 
 import csv
 import random
@@ -53,7 +53,7 @@ class Hasher:
 ###################################
 
    def __str__(self):
-      return(str(self.id) + ': ' + self.name)
+      return(str(self.id)   + ': ' + self.name)
 
 ###########################################################################
 
@@ -276,9 +276,16 @@ class Hasher:
           (wantSuccessfulBid   and hasSuccessfulBid  ) or
           (wantUnsuccessfulBid and hasUnsuccessfulBid)):
          if (params["outputFormat"] == "html"):
+#             params["outputFile"].writelines(
+#                ['   <td valign="top">\n',
+#                 "    <b>" + str(self) + "</b><br/>\n"])
             params["outputFile"].writelines(
                ["   <td>\n",
                 "    <b>" + str(self) + "</b><br/>\n"])
+
+            if (params["indent"] >= 0):
+               params["indent"] = params["indent"] + 0
+
             if (not hasBid):
                if (printNegative):
                   params["outputFile"].write("- No bids submitted -")
@@ -471,7 +478,8 @@ class Hashers:
              "</head>\n"                             ,
              "\n"                                    ,
              "<body>\n"                              ,
-             ' <table cellpadding=5pt style="width: 7.5in">\n'])
+             "<h1>Cumming on Trail</h1>"             ,
+             '<table cellpadding=5pt style="width: 7.5in">\n'])
 
          self.sortByName()
          nHasher = 0
