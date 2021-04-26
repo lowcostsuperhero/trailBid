@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 6 16:11:28 17-Apr-2021 rudyz $
+# name: $Id: trailBid.py 7 20:44:05 25-Apr-2021 rudyz $
 """
 usage: default execution is
           python trailBid.y
@@ -148,58 +148,71 @@ class TrailBid():
       pre: runBid() processing must be completed
       """
       params = Params(params).default("detail", 0)
+      params[self.__class__.__name__] = self
 
-      params.set()
-      printHeading("/// results by hasher ///", 0, 1)
-      self.hashers.printResultByHasher( # detail: 0=bare; 1=show bid value
-                      indent = 0, headLevel = 2, detail = detail)
+      if (params["outputFormat"] == "html"):
+         self.hashers.printResultByHasher(params)
+      elif (params["outputFormat"] is None):
+                                # hashers.hasher
+         wantNoBid           = ((params["noBidHasher"]           or 0) != 0)
+         wantSuccessfulBid   = ((params["successfulBidHasher"]   or 0) != 0)
+         wantUnsuccessfulBid = ((params["unsuccessfulBidHasher"] or 0) != 0)
 
-###########################################################################
+         if ((not (wantNoBid or wantSuccessfulBid or wantUnsuccessfulBid)) or
+             (wantNoBid and wantSuccessfulBid and wantUnsuccessfulBid)):
+            printHeading("/// results by hasher ///", 0, 1)
+         elif (wantNoBid and (not wantSuccessfulBid  ) and
+                             (not wantUnsuccessfulBid)):
+            printHeading("/// hashers with no bids ///", 0, 1)
+         else:
+            headline = ""
+            if (wantSuccessfulBid):
+               headline += ", successful"
+            if (wantUnsuccessfulBid):
+               headline += ", unsuccessful"
+            if (wantNoBid):
+               headline += ", no bid"
+            headline = re.sub("^, ", "", headline)
+            headline = re.sub(", ([^,]*)$", ", and \\1", headline)
+            printHeading("/// results by " + headline + " hasher ///", 0, 1)
 
-   def printResultBySuccessfulHasher(self, params = Params()):
-      """
-      use: For every hasher with at least one successful bid, print the
-           hasher and trail information of the successful bids
-      pre: runBid() processing must be completed
-      """
-      params = Params(params).default("detail", 0)
-
-      printHeading("/// results by successful hasher ///", 0, 1)
-
-      params.set([("indent"   , 0),
-                  ("headLevel", 2)])
-      self.hashers.printResultBySuccessfulHasher(params)
-
-###########################################################################
-
-   def printResultByUnsuccessfulHasher(self, params = Params()):
-      """
-      use: For every hasher who has submitted at least one bid but was
-           unsuccessful on all submitted bids, print the hasher
-      pre: runBid() processing must be completed
-      """
-      params = Params(params).default("detail", 0)
-
-      printHeading("/// results by unsuccessful hasher ///", 0, 1)
-
-      params.set([("indent"   , 0),
-                  ("headLevel", 2)])
-      self.hashers.printResultByUnsuccessfulHasher(params)
+         params.set([("indent"   , 0),
+                     ("headLevel", 2)])
+                                # detail: 0=bare; 1=show bid value
+         self.hashers.printResultByHasher(params)
+      else:
+         sys.stderr.write(selfName                           +
+                          ": TrailBid.printResultByTrail():" +
+                          " unknown output format: "         +
+                          params["outputFormat"])
 
 ###########################################################################
 
    def printResultByNoBidHasher(self, params = Params()):
       """
-      use: For every hasher without any bids for any trails, print the
-           hasher
-      pre: runBid() processing must be completed
+      use: Wrapper for printResultByHasher() to print only hashers
+           who have submitted no bids
       """
-      params = Params(params).default("detail", 0)
+      self.printResultByHasher(Params([("noBidHasher", 1)]))
 
-      printHeading("/// hashers with no bids ///", 0, 1)
-      params.set([("indent"   , 0),
-                  ("headLevel", 2)])
-      self.hashers.printResultByNoBidHasher(params)
+###########################################################################
+
+   def printResultBySuccessfulHasher(self, params = Params()):
+      """
+      use: Wrapper for printResultByHasher() to print only hashers who
+           have submitted at least one bid, but none of the submitted
+           bids were successful
+      """
+      self.printResultByHasher(Params([("successfulBidHasher", 1)]))
+
+###########################################################################
+
+   def printResultByUnsuccessfulHasher(self, params = Params()):
+      """
+      use: Wrapper for printResultByHasher() to print only hashers with
+           at least one successful bid
+      """
+      self.printResultByHasher(Params([("unsuccessfulBidHasher", 1)]))
 
 ###########################################################################
 
@@ -211,10 +224,9 @@ class TrailBid():
       """
       params = Params(params).default("detail", 0)
       params[self.__class__.__name__] = self
-
-      if (params["outputFormat"] in ("roster", "html")):
                                 # timeSlots.trails.trail.successfulBids.
                                 # bid.hasher.print
+      if (params["outputFormat"] in ("roster", "html")):
          self.timeSlots.printResultByTrail(params)
       elif (params["outputFormat"] is None):
          printHeading("/// results by trail ///", 0, 1)
@@ -305,19 +317,22 @@ if ( __name__ == "__main__" ):
 ###########################################################################
 
    print()
-   trailBid.printResultByTrail(Params("detail", 0))
-   trailBid.printResultByTrail(Params([("detail"      , 0       ),
-                                       ("outputFormat", "html"  )]))
-   trailBid.printResultByTrail(Params([("detail"      , 0       ),
-                                       ("outputFormat", "roster")]))
+                                # pass detail=1 to show hasher bid value
+   trailBid.printResultByTrail()
+   trailBid.printResultByTrail(Params("outputFormat", "html"  ))
+   trailBid.printResultByTrail(Params("outputFormat", "roster"))
 
    print()
-   trailBid.printResultBySuccessfulHasher(Params("detail", 0))
+   trailBid.printResultByHasher(Params("detail", 1))
+   trailBid.printResultByHasher(Params("outputFormat", "html"))
+
+#    print()
+#    trailBid.printResultBySuccessfulHasher()
 
    print()
-   trailBid.printResultByUnsuccessfulHasher(Params("detail", 0))
+   trailBid.printResultByUnsuccessfulHasher()
 
    print()
-   trailBid.printResultByNoBidHasher(Params("detail", 0))
+   trailBid.printResultByNoBidHasher()
 
 ###########################################################################

@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 7 16:11:26 17-Apr-2021 rudyz $
+# name: $Id: hasher.py 8 20:43:58 25-Apr-2021 rudyz $
 
 import csv
 import random
@@ -200,7 +200,7 @@ class Hasher:
 
 ###########################################################################
 
-   def print(self, params):
+   def printHasher(self, params):
       """
       use: Print hasher's ID and name
       usage: See TimeSlots.printBids()
@@ -229,8 +229,18 @@ class Hasher:
       elif (params["outputFormat"] == "html"):
          params["outputFile"].write("   <td>" + str(self) + "</td>\n")
       elif (params["outputFormat"] is None):
-         print("".ljust(max(params["indent"], 0)) +
-               self.pretty())
+         bidValue = None
+         if (params["detail"] >= 1):
+            bid = params["Bid"]
+            if (bid is not None):
+               bidValue = bid.value
+         if (bidValue is None):
+            print("".ljust(max(params["indent"], 0)) +
+                  self.pretty())
+         else:
+            print("".ljust(max(params["indent"], 0)) +
+                  self.pretty()      + " ~ "  +
+                  "{:>4d}".format(bidValue))
       else:
          sys.stderr.write(selfName                      +
                           ": Hasher.print():" +
@@ -249,13 +259,59 @@ class Hasher:
                                        ('detail'   ,  0)])
       params[self.__class__.__name__] = self
 
-      self.print(params)
+      wantNoBid           = ((params["noBidHasher"]           or 0) != 0)
+      wantSuccessfulBid   = ((params["successfulBidHasher"]   or 0) != 0)
+      wantUnsuccessfulBid = ((params["unsuccessfulBidHasher"] or 0) != 0)
+      if (not (wantNoBid or wantSuccessfulBid or wantUnsuccessfulBid)):
+          wantSuccessfulBid = wantUnsuccessfulBid = wantNoBid = True
 
-      if (params["indent"   ] >= 0):
-         params["indent"   ] = params["indent"   ] + 9
-      if (params["headLevel"] >  0):
-         params["headLevel"] = params["headLevel"] + 1
-      self.successfulBids.printTrails(params)
+      hasBid             = (self.bids.count           != 0)
+      hasSuccessfulBid   = (self.successfulBids.count != 0)
+      hasUnsuccessfulBid = ((hasBid != 0) and (hasSuccessfulBid == 0))
+
+      printNegative = (wantSuccessfulBid or
+                      (wantNoBid and wantUnsuccessfulBid))
+
+      if ((wantNoBid           and (not hasBid)      ) or
+          (wantSuccessfulBid   and hasSuccessfulBid  ) or
+          (wantUnsuccessfulBid and hasUnsuccessfulBid)):
+         if (params["outputFormat"] == "html"):
+            params["outputFile"].writelines(
+               ["   <td>\n",
+                "    <b>" + str(self) + "</b><br/>\n"])
+            if (not hasBid):
+               if (printNegative):
+                  params["outputFile"].write("- No bids submitted -")
+            elif (hasUnsuccessfulBid):
+               if (printNegative):
+                  params["outputFile"].write("- No successful bids -")
+            else:
+               self.successfulBids.printTrails(params)
+            params["outputFile"].write(
+                "   </td>\n")
+         elif (params["outputFormat"] is None):
+            self.printHasher(params)
+
+            if (params["indent"   ] >= 0):
+               params["indent"   ] = params["indent"   ] + 9
+            if (params["headLevel"] >  0):
+               params["headLevel"] = params["headLevel"] + 1
+
+            if (not hasBid):
+               if (printNegative):
+                  print("".ljust(max(params["indent"], 0)) +
+                        "- No bids submitted -")
+            elif (hasUnsuccessfulBid):
+               if (printNegative):
+                  print("".ljust(max(params["indent"], 0)) +
+                        "- No successful bids -")
+            else:
+               self.successfulBids.printTrails(params)
+         else:
+            sys.stderr.write(selfName                          +
+                             ": Hasher.printResultByHasher():" +
+                             " unknown output format: "        +
+                             params["outputFormat"])
 
 ###########################################################################
 ###########################################################################
@@ -400,67 +456,49 @@ class Hashers:
                                        ("detail"   ,  0)])
       params[self.__class__.__name__] = self
 
-      self.sortByName()
-      for hasher in self.list:
-         hasher.printResultByHasher(params)
+      if (params["outputFormat"] == "html"):
+         outputDirectory = os.path.join(settings["eventDirectory"], "html")
+         if (not os.path.isdir(outputDirectory)):
+            os.mkdir(outputDirectory)
+         outputFilename = ("hasher-result.html")
+         outputFile = os.path.join(outputDirectory, outputFilename)
+         params["outputFile"] = open(outputFile, "w")
+         params["outputFile"].writelines(
+            ["<!DOCTYPE html>\n"                     ,
+             "<html>\n"                              ,
+             "<head>\n"                              ,
+             " <title>Trail Bidding Result</title>\n",
+             "</head>\n"                             ,
+             "\n"                                    ,
+             "<body>\n"                              ,
+             ' <table cellpadding=5pt style="width: 7.5in">\n'])
 
-###########################################################################
-
-   def printResultBySuccessfulHasher(self, params = Params()):
-      """
-      use: For every hasher with a successful bid for a trail, print the
-           hasher and trail information of the successful bid
-      usage: See TimeSlots.printBids()
-      pre: runBid() processing must be completed
-      """
-      params = Params(params).default([('indent'   , -1),
-                                       ('headLevel',  0),
-                                       ('detail'   ,  0)])
-      params[self.__class__.__name__] = self
-
-      self.sortByName()
-      for hasher in self.list:
-         if (hasher.successfulBidCount > 0):
+         self.sortByName()
+         nHasher = 0
+         for hasher in self.list:
+            if (nHasher == 0):
+               params["outputFile"].write("  <tr>\n")
             hasher.printResultByHasher(params)
+            nHasher += 1
+            if ((nHasher % 3) == 0):
+               params["outputFile"].write("  </tr>\n")
+               nHasher = 0
 
-###########################################################################
-
-   def printResultByUnsuccessfulHasher(self, params = Params()):
-      """
-      use: For every hasher with a bid for a trail but was unsuccessful
-           on all bids, print the hasher
-      usage: See TimeSlots.printBids()
-      pre: runBid() processing must be completed
-      """
-      params = Params(params).default([('indent'   , -1),
-                                       ('headLevel',  0),
-                                       ('detail'   ,  0)])
-      params[self.__class__.__name__] = self
-
-      self.sortByName()
-      for hasher in self.list:
-         if ((hasher.bidCount            > 0) and
-             (hasher.successfulBidCount == 0)):
+         params["outputFile"].writelines(
+            [" </table>\n",
+             "</body>\n",
+             "</html>\n"])
+         params["outputFile"].close()
+         params["outputFile"] = None
+      elif (params["outputFormat"] is None):
+         self.sortByName()
+         for hasher in self.list:
             hasher.printResultByHasher(params)
-
-###########################################################################
-
-   def printResultByNoBidHasher(self, params = Params()):
-      """
-      use: For every hasher without any bids for a trail, print the
-           hasher
-      usage: See TimeSlots.printBids()
-      pre: runBid() processing should be completed
-      """
-      params = Params(params).default([('indent'   , -1),
-                                       ('headLevel',  0),
-                                       ('detail'   ,  0)])
-      params[self.__class__.__name__] = self
-
-      self.sortByName()
-      for hasher in self.list:
-         if (hasher.bidCount == 0):
-            hasher.printResultByHasher(params)
+      else:
+         sys.stderr.write(selfName                        +
+                          ": Hashers.printResultByHasher():" +
+                          " unknown output format: "         +
+                          params["outputFormat"])
 
 ###########################################################################
 
