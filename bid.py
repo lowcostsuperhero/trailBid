@@ -1,4 +1,4 @@
-# name: $Id: bid.py 6 16:11:26 17-Apr-2021 rudyz $
+# name: $Id: bid.py 7 20:39:00 25-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -79,15 +79,9 @@ class Bid:
                                        ("detail",  0)])
       params[self.__class__.__name__] = self
 
-      if (params["outputFormat"] in ("roster", "html")):
-         self.hasher.print(params)
-      elif (params["outputFormat"] is None):
-         if (params["detail"] >= 1):
-            print("".ljust(max(params["indent"], 0)) +
-                  self.hasher.pretty()      + " ~ "  +
-                  "{:>4d}".format(self.value))
-         else:
-            self.hasher.print(params)
+      if ((params["outputFormat"] is None) or
+          (params["outputFormat"] in ("roster", "html"))):
+         self.hasher.printHasher(params)
       else:
          sys.stderr.write(selfName                      +
                           ": Bid.printResultByTrail():" +
@@ -106,13 +100,14 @@ class Bid:
                                        ('detail'   ,  0)])
       params[self.__class__.__name__] = self
 
-      if (params["detail"] >= 1):
-         print("".ljust(max(params["indent"], 0)) +
-               "{} ~ {:>4d}".format(self.trail.pretty(),
-                                    self.value))
-      else:
-         params["detail"] = 0
+      if ((params["outputFormat"] is None  ) or
+          (params["outputFormat"] == "html")):
          self.trail.printTrail(params)
+      else:
+         sys.stderr.write(selfName                   +
+                          ": Bid.printTrail():"      +
+                          " unknown output format: " +
+                          params["outputFormat"])
 
 ###########################################################################
 
@@ -255,7 +250,7 @@ class Bids:
 
    def getBids(self):
       """
-      use: All bids belonging to us
+      use: All your bids are belong to us
       """
       return(Bids().merge(self))
 
@@ -379,7 +374,19 @@ class Bids:
       params = Params(params).default("detail", 0)
       params[self.__class__.__name__] = self
 
-      if (params["outputFormat"] in ("roster", "html")):
+      if (params["outputFormat"] == "html"):
+         nHasher = 0
+         for index in range(0, self.count):
+            if (nHasher == 0):
+               params["outputFile"].write("  <tr>\n")
+            self.list[index].printHasher(params)
+            nHasher += 1
+            if ((nHasher % 3) == 0):
+               params["outputFile"].write("  </tr>\n")
+               nHasher = 0
+         if (nHasher != 0):
+            params["outputFile"].write("  </tr>\n")
+      if (params["outputFormat"] == "roster"):
          virtualHasher = hasher_module.Hasher(0, 0, "")
          virtualBid    = bid_module.Bid(virtualHasher, None, 0)
          nHasher = 0

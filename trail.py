@@ -1,4 +1,4 @@
-# name: $Id: trail.py 8 16:11:27 17-Apr-2021 rudyz $
+# name: $Id: trail.py 9 20:39:04 25-Apr-2021 rudyz $
 
 import csv
 import sys
@@ -203,19 +203,32 @@ class Trail:
                                        ('detail',  0)])
       params[self.__class__.__name__] = self
 
-      if (params["detail"] >= 2):
-         print("".ljust(max(params["indent"], 0)) +
-               self.pretty() +
-               " [" + "{:>5d}/{:<5d} ~{:<7d}".format(self.bidCount,
-                                                     self.capacity,
-                                                     self.bidValue) + "]")
-      elif (params["detail"] == 1):
-         print("".ljust(max(params["indent"], 0)) +
-               self.pretty()                      +
-               " [" + str(self.capacity) + "]")
+      if (params["outputFormat"] == "html"):
+         params["outputFile"].write(self.pretty() + "<br/>")
+      elif (params["outputFormat"] is None):
+         if (params["detail"] >= 2):
+            print("".ljust(max(params["indent"], 0)) +
+                  self.pretty()                      +
+                  " [" + "{:>5d}/{:<5d} ~{:<7d}".format(self.bidCount,
+                                                        self.capacity,
+                                                        self.bidValue) + "]")
+         else:
+            bid = None
+            if (params["detail"] > 0):
+               bid = params["Bid"]
+            if (bid is None):
+               print("".ljust(max(params["indent"], 0)) +
+                     self.pretty())
+            else:
+               print("".ljust(max(params["indent"], 0)) +
+                     "{} ~ {:>4d}".format(self.pretty(),
+                                          bid.value))
       else:
-         print("".ljust(max(params["indent"], 0)) +
-               self.pretty())
+         sys.stderr.write(selfName                   +
+                          ": Trail.printTrail():"    +
+                          " unknown output format: " +
+                          params["outputFormat"])
+
 
 ###########################################################################
 
