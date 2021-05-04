@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 9 00:36:07 26-Apr-2021 rudyz $
+# name: $Id: hasher.py 10 00:54:25 04-May-2021 rudyz $
 
 import csv
 import random
@@ -211,21 +211,21 @@ class Hasher:
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "roster"):
-#          params["outputFile"].writelines(
-#             ["   <td>&EmptySmallSquare;&nbsp;&nbsp;" +
-#                     "&EmptySmallSquare;&nbsp;&nbsp;\n",
-#              "     " + str(self.hasher) + "\n"  ,
-#              "   </td>\n"])
          params["outputFile"].writelines(
-            ["   <td>\n"                                   ,
-             "    <div class=left>\n"                      ,
-             "      &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n",
-             "      " + str(self) + "\n"                   ,
-             "    </div>\n"                                ,
-             "    <div class=right>\n"                     ,
-             "     &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n" ,
-             "    </div>\n"                                ,
+            ["   <td>&nbsp;&EmptySmallSquare;&nbsp;&nbsp;&nbsp;" +
+                          "&EmptySmallSquare;&nbsp;\n",
+             "     " + str(self) + "\n"               ,
              "   </td>\n"])
+#          params["outputFile"].writelines(
+#             ["   <td>\n"                                   ,
+#              "    <div class=left>\n"                      ,
+#              "      &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n",
+#              "      " + str(self) + "\n"                   ,
+#              "    </div>\n"                                ,
+#              "    <div class=right>\n"                     ,
+#              "     &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n" ,
+#              "    </div>\n"                                ,
+#              "   </td>\n"])
       elif (params["outputFormat"] == "html"):
          params["outputFile"].write("   <td>" + str(self) + "</td>\n")
       elif (params["outputFormat"] is None):
@@ -245,7 +245,7 @@ class Hasher:
          sys.stderr.write(selfName                      +
                           ": Hasher.print():" +
                           " unknown output format: "    +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -318,7 +318,7 @@ class Hasher:
             sys.stderr.write(selfName                          +
                              ": Hasher.printResultByHasher():" +
                              " unknown output format: "        +
-                             params["outputFormat"])
+                             params["outputFormat"] + "\n")
 
 ###########################################################################
 ###########################################################################
@@ -506,7 +506,7 @@ class Hashers:
          sys.stderr.write(selfName                        +
                           ": Hashers.printResultByHasher():" +
                           " unknown output format: "         +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -582,7 +582,7 @@ class Hashers:
       see also: Bids.sortEquitably()
       """
       selfDirectory = settings["hashersDirectory"]
-      filename      = "hasherOrder.txt"
+      filename      = "00-orderOfHashers.txt"
       filespec      = os.path.join(selfDirectory, filename)
       if (os.path.isfile(filespec)):
                                 # if hasherOrder.txt exists, it will contain
@@ -606,9 +606,7 @@ class Hashers:
                   hasher   = self.getById(hasherId)
                   if (hasher is not None):
                      hasher.order = int(row[1])
-                     hasher.rank  = (hasher.sequence *
-                                     hasher.sequence *
-                                     hasher.order)
+                     hasher.rank  = (hasher.sequence * hasher.order)
                   else:
                      printFileReadError(
                         lineNumber,
@@ -623,9 +621,7 @@ class Hashers:
          for hasher in self.list:
             index       += 1
             hasher.order = index
-            hasher.rank  = (hasher.sequence *
-                            hasher.sequence *
-                            hasher.order)
+            hasher.rank  = (hasher.sequence * hasher.order)
 
          self.sortBySequence()
          filespec = settings["hashersDirectory"]
