@@ -1,5 +1,13 @@
-# name: $Id: generate.py 1 00:55:26 09-Apr-2021 rudyz $
-
+# name: $Id: generate.py 2 00:55:45 04-May-2021 rudyz $
+"""
+use: Generate hashers.txt and bids.txt files located in the event
+     directory. These generated hashers and their bids may be useful
+     for development and/or debugging. Under normal circumstances, this
+     generation would not be required since this data would be expected
+     to be supplied from actual bidding
+usage: For help:
+          python generate.py -h
+"""
 import csv
 import getopt
 import os
@@ -34,8 +42,8 @@ def generateHashers(hashers, eventDirectory, mode):
    file.write("hasherID,hasherName\n")
    for id in range(1, hashers + 1):
       file.write(str(id) + ", " +
-                 str(id) +
-                 ", Hasher {:04d}".format(id) + "\n")
+                 str(id) + ", " +
+                 "Hasher {:04d}".format(id) + "\n")
    file.close()
 
 ###########################################################################
@@ -43,8 +51,17 @@ def generateHashers(hashers, eventDirectory, mode):
 def generateBids_dribble(hashers, trailMin, trailMax, allowance,
                         eventDirectory, mode):
    """
-   imp: structure of bids.txt CSV file:
+   imp: Structure of bids.txt CSV file:
            hasherID,trailID,bidAmount
+        The first hasher bids the maximum value on the zeroeth trail (T0).
+        Each subsequent hasher transfer bid value from T0 to successive
+        trails. The span of trails to be credited with additional bid
+        values from T0 will range from T1 to TM, where M is the total
+        number of trails in the timeslot; once the span has incremented
+        to M, it will restart back from 1. For each iteration, for every
+        trail N between [1, M] to be credited addtional bid values, all
+        trails from [1..N] must also be credited with additional bid
+        values transferred from T0
    """
    file = open(os.path.join(eventDirectory, "bids.txt"), mode)
    if (mode == "w"):
@@ -86,8 +103,14 @@ def generateBids_dribble(hashers, trailMin, trailMax, allowance,
 def generateBids_pool(hashers, trailMin, trailMax, allowance,
                       eventDirectory, mode):
    """
-   imp: structure of bids.txt CSV file:
+   imp: Structure of bids.txt CSV file:
            hasherID,trailID,bidAmount
+        The first hasher bids the maximum value on the zeroeth trail (T0).
+        Each subsequent hasher transfer bid value from T0 to successive
+        trails. The span of trails to be credited with additional bid
+        values where a bid value will transfer from TN to T(N+1) if the
+        bid values will not result in a situation where the bid value of
+        TN is less than T(N+1).
    """
    file = open(os.path.join(eventDirectory, "bids.txt"), mode)
    if (mode == "w"):
@@ -98,11 +121,17 @@ def generateBids_pool(hashers, trailMin, trailMax, allowance,
       bids[trailId] = allowance if trailId == trailMin else 0
 
    for hasherId in range(1, hashers + 1):
-      for trailId in range(trailMin, trailMax):
+      shifted = 0
+      for trailId in range(trailMax, trailMin, -1):
                                 # shift this hasher's bids
-         if (bids[trailId] >= bids[trailId + 1] + 2):
-            bids[trailId    ] -= 1
-            bids[trailId + 1] += 1
+         if (bids[trailId - 1] > (bids[trailId]) ):
+            bids[trailId - 1] -= 1
+            bids[trailId    ] += 1
+            shifted           += 1
+
+      if (shifted == 0):
+         for trailId in range(trailMin, trailMax + 1):
+            bids[trailId] = allowance if trailId == trailMin else 0
 
       for trailId in range(trailMin, trailMax + 1):
          if (bids[trailId] != 0):
@@ -187,7 +216,7 @@ if ( __name__ == "__main__" ):
       if (opt[0] == "-n"):
          hashers = int(opt[1])
       elif (opt[0] == "-h"):
-         print("usage: " + selfName + "[options]" +
+         print("usage: " + selfName + " [options]" +
                          " [directoryName [distribution]]")
          print("where option are:")
          print("   -nNumber number of hashers to generate; if not provided," +
@@ -196,6 +225,7 @@ if ( __name__ == "__main__" ):
          print("If directory name is not provided, it defaults to 'event';")
          print("directoryName for the generated datafiles must already exist,")
          print("distribution is one of: dribble, pool, or random;")
+         exit(0)
 
    for arg in args:
       if (eventDirectory is None):
@@ -203,7 +233,8 @@ if ( __name__ == "__main__" ):
       elif (distribution is None):
          distribution   = arg
       else:
-         sys.stderr.write(selfName + ": unwanted extra argument: " + arg)
+         sys.stderr.write(selfName + ": unwanted extra argument: " +
+                          arg + "\n")
          exit(1)
 
    if (eventDirectory is None):
@@ -212,8 +243,8 @@ if ( __name__ == "__main__" ):
       distribution   = "random"
 
    if (not os.path.isdir(eventDirectory)):
-      sys.stderr.write(selfName + ": directory does no exist: " +
-                                  eventDirectory)
+      sys.stderr.write(selfName + ": directory does not exist: " +
+                                  eventDirectory + "\n")
       exit(1)
 
    settings.readFile(eventDirectory)
@@ -226,11 +257,12 @@ if ( __name__ == "__main__" ):
       if (csv.Sniffer().has_header(open(csvfile.name).read(1024))):
          next(csvReader)
       for row in csvReader:
-         timeSlotId = int(row[0])
-         trailId    = int(row[1])
-         if (timeSlotId not in timeSlots):
-            timeSlots[timeSlotId] = []
-         timeSlots[timeSlotId].append(int(trailId))
+         if (len(row) != 0):
+            timeSlotId = int(row[0])
+            trailId    = int(row[1])
+            if (timeSlotId not in timeSlots):
+               timeSlots[timeSlotId] = []
+            timeSlots[timeSlotId].append(int(trailId))
 
    generateHashers(hashers, eventDirectory, "w")
    fileMode = "w"
