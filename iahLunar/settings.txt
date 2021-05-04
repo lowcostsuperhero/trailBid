@@ -1,0 +1,2 @@
+# maximum bid value allowed per hasher per time slot
+bidAllowance = 1000

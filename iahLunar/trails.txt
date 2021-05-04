@@ -1,0 +1,20 @@
+trailID, sequence, trailName, trailCapacity
+51, 501, Fri trail 1, 100
+52, 502, Fri trail 2, 100
+53, 503, Fri trail 3, 100
+54, 504, Fri trail 4, 100
+55, 505, Fri trail 5, 100
+56, 506, Fri trail 6, 100
+57, 507, Fri trail 7, 100
+58, 508, Fri trail 8, 100
+
+61, 601, Sat trail 1, 200
+62, 602, Sat trail 2, 200
+63, 603, Sat trail 3, 200
+64, 604, Sat trail 4, 200
+65, 605, Sat trail 5, 200
+66, 606, Sat trail 6, 200
+67, 607, Sat trail 7, 200
+68, 608, Sat trail 8, 200
+69, 609, Sat trail 9, 200
+70, 710, Sat trail 10, 200
