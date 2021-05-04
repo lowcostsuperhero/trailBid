@@ -1,10 +1,13 @@
-# name: $Id: trailBid.py 8 00:36:01 26-Apr-2021 rudyz $
+# name: $Id: trailBid.py 9 00:51:41 04-May-2021 rudyz $
 """
-usage: default execution is
-          python trailBid.y
-       to remain in interactive mode after importing trailBid.py:
-          python -i trailBid.py
-       in interactive mode, "help()" will get a small amount of help
+usage: Default execution is
+          python trailBid.py
+       To remain in interactive mode after importing trailBid.py:
+          python -i trailBid.py eventDirectory
+       In interactive mode, "help()" will get a small amount of help
+pre: If trails, hashers, or bids have changed, the 00-orderOfHashers.txt
+     file in the event directory should be removed prior to the next
+     call to runBid()
 """
 import getopt
 import posixpath
@@ -185,7 +188,7 @@ class TrailBid():
          sys.stderr.write(selfName                           +
                           ": TrailBid.printResultByTrail():" +
                           " unknown output format: "         +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -238,18 +241,36 @@ class TrailBid():
          sys.stderr.write(selfName                           +
                           ": TrailBid.printResultByTrail():" +
                           " unknown output format: "         +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 ###########################################################################
 ###########################################################################
 
 def explain(hasherId):
+   """
+   use: Explains what happened to a hasher's bid(s)
+   usage: Pass hasherID
+   pre: runBid() processing must be completed
+   """
    trailBid.hashers.getById(int(hasherId)).explain()
 
-def help():
-   print("explain(hasherID) explain hasher's bids")
-   print("help()            help")
+def help(verbosity = 0):
+   print("explain(hasherID)   explain a hasher's bids")
+   print("help(verbosity = 0) help")
+   if (verbosity > 0):
+      print()
+      print("Top-level methods:")
+      print("  trailBid.printResult(detail = 0)")
+      print("  trailBid.printResultByHasher(params = Params())")
+      print("  trailBid.printResultByNoBidHasher(params = Params())")
+      print("  trailBid.printResultBySuccessfulHasher(params = Params())")
+      print("  trailBid.printResultByTrail(params = Params())")
+      print("  trailBid.printResultByUnsuccessfulHasher(params = Params())")
+#       for method in [attribute for attribute in dir(TrailBid)
+#                                if callable(getattr(TrailBid, attribute)) and
+#                                   attribute.startswith('__') is False]:
+#          print("trailBid." + method)
 
 ###########################################################################
 ###########################################################################
@@ -284,7 +305,8 @@ if ( __name__ == "__main__" ):
       eventDirectory = "event"
 
    if (not os.path.isdir(eventDirectory)):
-      sys.stderr.write(selfName + ": no event directory: " + eventDirectory)
+      sys.stderr.write(selfName + ": no event directory: " +
+                       eventDirectory + "\n")
       exit(1)
 
    printHeading("/// settings ///", 0, 1)
