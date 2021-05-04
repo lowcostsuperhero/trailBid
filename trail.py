@@ -1,4 +1,4 @@
-# name: $Id: trail.py 10 00:36:07 26-Apr-2021 rudyz $
+# name: $Id: trail.py 11 00:55:11 04-May-2021 rudyz $
 
 import csv
 import sys
@@ -228,7 +228,7 @@ class Trail:
          sys.stderr.write(selfName                   +
                           ": Trail.printTrail():"    +
                           " unknown output format: " +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 
 ###########################################################################
@@ -330,7 +330,7 @@ class Trail:
          sys.stderr.write(selfName                        +
                           ": Trail.printResultByTrail():" +
                           " unknown output format: "      +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -595,7 +595,7 @@ class Trails:
          sys.stderr.write(selfName                         +
                           ": Trails.printResultByTrail():" +
                           " unknown output format: "       +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 

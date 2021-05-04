@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 4 16:11:27 17-Apr-2021 rudyz $
+# name: $Id: timeSlot.py 5 00:55:11 04-May-2021 rudyz $
 
 import csv
 import sys
@@ -180,7 +180,7 @@ class TimeSlot:
          sys.stderr.write(selfName                           +
                           ": TimeSlot.printResultByTrail():" +
                           " unknown output format: "         +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -382,7 +382,7 @@ class TimeSlots:
          sys.stderr.write(selfName                            +
                           ": TimeSlots.printResultByTrail():" +
                           " unknown output format: "          +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
