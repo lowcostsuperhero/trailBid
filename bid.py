@@ -1,4 +1,4 @@
-# name: $Id: bid.py 7 20:39:00 25-Apr-2021 rudyz $
+# name: $Id: bid.py 8 00:53:15 04-May-2021 rudyz $
 
 import csv
 import sys
@@ -86,7 +86,7 @@ class Bid:
          sys.stderr.write(selfName                      +
                           ": Bid.printResultByTrail():" +
                           " unknown output format: "    +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -107,7 +107,7 @@ class Bid:
          sys.stderr.write(selfName                   +
                           ": Bid.printTrail():"      +
                           " unknown output format: " +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -386,7 +386,7 @@ class Bids:
                nHasher = 0
          if (nHasher != 0):
             params["outputFile"].write("  </tr>\n")
-      if (params["outputFormat"] == "roster"):
+      elif (params["outputFormat"] == "roster"):
          virtualHasher = hasher_module.Hasher(0, 0, "")
          virtualBid    = bid_module.Bid(virtualHasher, None, 0)
          nHasher = 0
@@ -413,7 +413,7 @@ class Bids:
          sys.stderr.write(selfName                   +
                           ": Bids.printHashers():"   +
                           " unknown output format: " +
-                          params["outputFormat"])
+                          params["outputFormat"] + "\n")
 
 ###########################################################################
 
@@ -476,7 +476,7 @@ class Bids:
               - Bids with higher bid values first, then progressing through
                 other attributes.
               - Hashers with fewer successful bids and fewer bids have a
-                slight advantage over hashers who have been more number of
+                slight advantage over hashers who have more number of
                 successful bids, or have more bids that would give them a
                 greater number of chances to be successful later
               - The randomized hasher sequence number, so that the hasher
