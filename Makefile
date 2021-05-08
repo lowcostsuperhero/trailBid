@@ -1,12 +1,16 @@
 all: trailBid.py
 
+EVENTDIRECTORY = iahLunar
+
 always.o:
 
 generate.py: always.o
-	python.exe generate.py iahLunar pool
+	rm -f $(EVENTDIRECTORY)/00-orderOfHashers.txt
+	python.exe generate.py $(EVENTDIRECTORY) pool
 
 generate_random: always.o
-	python.exe generate.py iahLunar random
+	rm -f $(EVENTDIRECTORY)/00-orderOfHashers.txt
+	python.exe generate.py $(EVENTDIRECTORY) random
 
 trailBid.py: always.o
-	python.exe trailBid.py iahLunar
+	python.exe trailBid.py $(EVENTDIRECTORY)
