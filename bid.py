@@ -1,4 +1,4 @@
-# name: $Id: bid.py 8 00:53:15 04-May-2021 rudyz $
+# name: $Id: bid.py 9 01:40:27 08-May-2021 rudyz $
 
 import csv
 import sys
@@ -494,7 +494,12 @@ class Bids:
                         bid.hasher.bidCount          , # advantage fewer bids
                         bid.hasher.rank              , # randomized rank
                         bid.trail.bidCount           , # less bidded-on trails
-                        bid.trail.id))
+                        bid.trail.id)) # bidCount comes into play when the
+                        # trail becomes oversubscribed, so we try to fulfill
+                        # trails with fewer submitted bids first so that we
+                        # we can delay filling up the trail with more bids
+                        # submitted for it, and hopefully will allow us to
+                        # successfully satisfy more bids
       return(self)
 
 ###########################################################################
