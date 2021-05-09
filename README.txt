@@ -20,7 +20,7 @@ hashers based on their bid values.
 QUICKSTART
 ----------
 cd into the trailBid directory, then execute:
-   make generate.py
+   make generate_pool
    make trailBid.py
 Results will be dumped to the screen, as well as in html files in
 iahLunar/html
@@ -44,19 +44,19 @@ In the iahLunar demo/example directory, hashers.txt and bids.txt are
 missing. For an actual event, this information should be supplied by the
 event mismanagement. For iahLunar, virtual hashers and virtual bids can be
 generated for these two files by executing:
-   python generate.py
+      python generate.py iahLunar pool
 This is also accessible via make:
-   make generate.py
+      make generate_pool
 
 NOTE: All the Makefile targets pass iahLunar as the event directory.
 
 By default, generate.py will create 2000 hashers, this number can be
 changed by passing -n and the number of hashers to generate, eg:
-   python generate.py -n1234
+   python generate.py -n1234 iahLunar
 The distribution of bids by each hasher is done by a method internally
 named "pool"; other distributions are "dribble", or "random". The bid
 distribution can also be passed:
-   python generate.py random
+   python generate.py iahLunar random
 Both the "-n" and distribution arguments are optional, and either, both, or
 neither can be passed.
 
