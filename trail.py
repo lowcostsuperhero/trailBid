@@ -1,4 +1,4 @@
-# name: $Id: trail.py 11 00:55:11 04-May-2021 rudyz $
+# name: $Id: trail.py 12 00:29:01 10-May-2021 rudyz $
 
 import csv
 import sys
@@ -199,8 +199,8 @@ class Trail:
                 1: also print trail capacity
                 2: also print bid count, trail capacity, and total bid value
       """
-      params = Params(params).default([('indent', -1),
-                                       ('detail',  0)])
+      params = Params(params).default([("indent", -1),
+                                       ("detail",  0)])
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "html"):
