@@ -1,8 +1,12 @@
-# named: $Id: param.py 2 16:11:27 17-Apr-2021 rudyz $
+# named: $Id: param.py 3 00:28:39 10-May-2021 rudyz $
 
 """
 use: Generic object based construct for passing variable number of
-     arguments instead of **kwargs
+     arguments instead of **kwargs. Params() gives us slighly more
+     flexibility and allows constructs like:
+        params[self.__class__.__name__] = self
+     which we use to register the class name of each stack frame which
+     allows called methods to locate a calling class object
 usage: Although a Params() object is passed by value, data belonging to
        the params object is effectively passed by reference. If changes
        are intended to be made to the params values, the params objects
