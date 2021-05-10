@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 9 00:51:41 04-May-2021 rudyz $
+# name: $Id: trailBid.py 10 00:29:48 10-May-2021 rudyz $
 """
 usage: Default execution is
           python trailBid.py
@@ -132,15 +132,18 @@ class TrailBid():
 
 ###########################################################################
 
-   def printResult(self, detail = 0):
+   def printResult(self, params = Params()):
       """
       use: Uninspired wrapper for printResultByTrail() followed by
            printResultByHasher()
       pre: runBid() processing must be completed
       """
-      self.printResultByTrail(detail = detail)
+      params = Params(params).default("detail", 0)
+      params[self.__class__.name__] = self
+
+      self.printResultByTrail(params)
       print()
-      self.printResultByHasher(detail = detail)
+      self.printResultByHasher(params)
 
 ###########################################################################
 
@@ -261,7 +264,7 @@ def help(verbosity = 0):
    if (verbosity > 0):
       print()
       print("Top-level methods:")
-      print("  trailBid.printResult(detail = 0)")
+      print("  trailBid.printResult(params = Params())")
       print("  trailBid.printResultByHasher(params = Params())")
       print("  trailBid.printResultByNoBidHasher(params = Params())")
       print("  trailBid.printResultBySuccessfulHasher(params = Params())")
