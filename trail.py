@@ -1,4 +1,4 @@
-# name: $Id: trail.py 12 00:29:01 10-May-2021 rudyz $
+# name: $Id: trail.py 13 18:12:35 16-May-2021 rudyz $
 
 import csv
 import sys
@@ -155,30 +155,29 @@ class Trail:
 
 ###########################################################################
 
-
-   def printBids(self, params = Params()):
+   def printBids(self, **kwargs):
       """
       use: Print list of all bids submitted for this trail
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
-      self.bids.printBids(params)
+      self.bids.printBids(**params())
 
 ###########################################################################
 
-   def printHashers(self, params = Params()):
+   def printHashers(self, **kwargs):
       """
       use: Print list of all hashers who have submitted a bid for this
            trail
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       printHeading(self.name, params["indent"], params["headLevel"])
@@ -187,11 +186,11 @@ class Trail:
          params["indent"   ] = params["indent"   ] + 1
       if (params["headLevel"] >  0):
          params["headLevel"] = params["headLevel"] + 1
-      self.bids.printHashers(params)
+      self.bids.printHashers(**params())
 
 ###########################################################################
 
-   def printTrail(self, params = Params()):
+   def printTrail(self, **kwargs):
       """
       use: Print, at minimum, this trail's ID and name
       usage: See TimeSlots.printBids().
@@ -199,8 +198,9 @@ class Trail:
                 1: also print trail capacity
                 2: also print bid count, trail capacity, and total bid value
       """
-      params = Params(params).default([("indent", -1),
-                                       ("detail",  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "html"):
@@ -233,7 +233,7 @@ class Trail:
 
 ###########################################################################
 
-   def printResultByTrail(self, params = Params()):
+   def printResultByTrail(self, **kwargs):
       """
       use: Print list of hashers with a successful bid for this trail.
       usage: See TimeSlots.printBids().
@@ -246,9 +246,9 @@ class Trail:
                           suitable for inclusion on a website
                    None   simple text output list
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       (lowest, highest) = self.successfulBids.bookendValues
@@ -299,7 +299,7 @@ class Trail:
                                      str(self.capacity) + "</b><br/><br/>\n",
               ' <table cellpadding=5pt style="width: 7.5in">\n'])
          self.successfulBids.sortByHasherName()
-         self.successfulBids.printHashers(params)
+         self.successfulBids.printHashers(**params())
          params["outputFile"].writelines(
             [" </table>\n",
              "</body>\n",
@@ -312,7 +312,7 @@ class Trail:
 #                                   str(highest) + " ~ " + str(lowest),
 #                       params["indent"],
 #                       params["headLevel"])
-         printHeading(self.name, params)
+         printHeading(self.name, params["indent"], params["headLevel"])
          printHeading("- Attendees = " +
                       str(self.successfulBidsCount) + "/"  +
                       str(self.capacity)            + "; " +
@@ -325,7 +325,7 @@ class Trail:
             params["indent"   ] = params["indent"   ] + 1
          if (params["headLevel"] >  0):
             params["headLevel"] = params["headLevel"] + 1
-         self.successfulBids.printHashers(params)
+         self.successfulBids.printHashers(**params())
       else:
          sys.stderr.write(selfName                        +
                           ": Trail.printResultByTrail():" +
@@ -528,57 +528,56 @@ class Trails:
 
 ###########################################################################
 
-   def printBids(self, params = Params()):
+   def printBids(self, **kwargs):
       """
       use: Print list of all bids received for trails belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       for trail in self.list:
-         trail.printBids(params)
+         trail.printBids(**params())
 
 ###########################################################################
 
-   def printHashers(self, params = Params()):
+   def printHashers(self, **kwargs):
       """
       use: Print list of all hashers who have submitted bids for trails
            belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                    ("headLevel",  0),
-                                    ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       nTrails = 0
       for trail in self.list:
          if (nTrails):
             print()
-         trail.printHashers(params)
+         trail.printHashers(**params())
          nTrails += 1
 
 ###########################################################################
 
-   def printResultByTrail(self, params = Params()):
+   def printResultByTrail(self, **kwargs):
       """
       use: For each trail, print list of hashers with a successful bid for
            the trail
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default("detail",  0)
+      params = Params(kwargs, detail =  0)
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] in ("roster", "html")):
          for trail in self.sortBySequence():
-            trail.printResultByTrail(params)
+            trail.printResultByTrail(**params())
       elif (params["outputFormat"] is None):
-         params.default([("indent"   , -1),
-                        ("headLevel",  0)])
-
+         params.setDefaults(indent    = -1,
+                            headLevel =  0)
          if (params["indent"   ] >= 0):
             params["indent"   ] = params["indent"   ] + 1
          if (params["headLevel"] >  0):
@@ -589,7 +588,7 @@ class Trails:
             if (nTrails):
                print()
 
-            trail.printResultByTrail(params)
+            trail.printResultByTrail(**params())
             nTrails += 1
       else:
          sys.stderr.write(selfName                         +
@@ -599,18 +598,18 @@ class Trails:
 
 ###########################################################################
 
-   def printTrails(self, params = Params()):
+   def printTrails(self, **kwargs):
       """
       use: Print list of trails belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       for trail in self.list:
-         trail.printTrail(params["indent"], params["detail"])
+         trail.printTrail(**params())
 
 ###########################################################################
 

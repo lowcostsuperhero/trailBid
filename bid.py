@@ -1,4 +1,4 @@
-# name: $Id: bid.py 9 01:40:27 08-May-2021 rudyz $
+# name: $Id: bid.py 10 18:17:09 16-May-2021 rudyz $
 
 import csv
 import sys
@@ -49,13 +49,13 @@ class Bid:
 
 ###########################################################################
 
-   def printBid(self, params = Params()):
+   def printBid(self, **kwargs):
       """
       use: Print list of bids belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent", -1),
-                                       ("detail",  0)])
+      params = Params(kwargs, indent = -1,
+                              detail =  0)
       params[self.__class__.__name__] = self
 
       if (params["detail"] >= 1):
@@ -70,18 +70,19 @@ class Bid:
 
 ###########################################################################
 
-   def printHasher(self, params = Params()):
+   def printHasher(self, **kwargs):
       """
       use: Print hasher who submitted this bid
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent", -1),
-                                       ("detail",  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       if ((params["outputFormat"] is None) or
           (params["outputFormat"] in ("roster", "html"))):
-         self.hasher.printHasher(params)
+         self.hasher.printHasher(**params())
       else:
          sys.stderr.write(selfName                      +
                           ": Bid.printResultByTrail():" +
@@ -90,19 +91,19 @@ class Bid:
 
 ###########################################################################
 
-   def printTrail(self, params = Params()):
+   def printTrail(self, **kwargs):
       """
       use: Print trail that is bidded on by this bid
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([('indent'   , -1),
-                                       ('headLevel',  0),
-                                       ('detail'   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       if ((params["outputFormat"] is None  ) or
           (params["outputFormat"] == "html")):
-         self.trail.printTrail(params)
+         self.trail.printTrail(**params())
       else:
          sys.stderr.write(selfName                   +
                           ": Bid.printTrail():"      +
@@ -350,28 +351,28 @@ class Bids:
 
 ###########################################################################
 
-   def printBids(self, params = Params):
+   def printBids(self, **kwargs):
       """
       use: Print list of bids belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel = 0,
+                              detail    = 0)
       params[self.__class__.__name__] = self
 
       for bid in self.list:
-         bid.printBid(params)
+         bid.printBid(**params())
 
 ###########################################################################
 
-   def printHashers(self, params = Params()):
+   def printHashers(self, **kwargs):
       """
       use: Print list of hashers who have submitted a bid belonging to
            us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default("detail", 0)
+      params = Params(kwargs, detail = 0)
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "html"):
@@ -379,7 +380,7 @@ class Bids:
          for index in range(0, self.count):
             if (nHasher == 0):
                params["outputFile"].write("  <tr>\n")
-            self.list[index].printHasher(params)
+            self.list[index].printHasher(**params())
             nHasher += 1
             if ((nHasher % 3) == 0):
                params["outputFile"].write("  </tr>\n")
@@ -394,10 +395,10 @@ class Bids:
             if (nHasher == 0):
                params["outputFile"].write("  <tr>\n")
             if (index < self.count):
-               self.list[index].printHasher(params)
+               self.list[index].printHasher(**params())
             else:
                virtualHasher.id = index + 1
-               virtualBid.printHasher(params)
+               virtualBid.printHasher(**params())
             nHasher += 1
             if ((nHasher % 3) == 0):
                params["outputFile"].write("  </tr>\n")
@@ -405,10 +406,10 @@ class Bids:
          if (nHasher != 0):
             params["outputFile"].write("  </tr>\n")
       elif (params["outputFormat"] is None):
-         params.default([("indent"   , -1),
-                         ("headLevel",  0)])
+         params.setDefaults(indent    = -1,
+                            headLevel =  0)
          for bid in self.list:
-            bid.printHasher(params)
+            bid.printHasher(**params())
       else:
          sys.stderr.write(selfName                   +
                           ": Bids.printHashers():"   +
@@ -417,18 +418,19 @@ class Bids:
 
 ###########################################################################
 
-   def printTrails(self, params = Params()):
+   def printTrails(self, **kwargs):
       """
       use: Print list of trails which have been bidded on by a bid
            belonging to us
       usage: See TimeSlots.printBids()
       """
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
+      params[self.__class__.__name__] = self
+
       for bid in self.list:
-         bid.printTrail(Params(params).default(
-                                          [('indent'   , -1),
-                                           ('headLevel',  0),
-                                           ('detail'   ,  0),
-                                           (self.__class__.__name__, self)]))
+         bid.printTrail(**params())
 
 ###########################################################################
 

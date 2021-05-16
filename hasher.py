@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 10 00:54:25 04-May-2021 rudyz $
+# name: $Id: hasher.py 11 18:21:46 16-May-2021 rudyz $
 
 import csv
 import random
@@ -178,14 +178,14 @@ class Hasher:
 
 ###########################################################################
 
-   def printBids(self, params = Params()):
+   def printBids(self, **kwargs):
       """
       use: Print all bids submitted by hasher
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       print("".ljust(max(params["indent"], 0)) + self.pretty())
@@ -196,18 +196,18 @@ class Hasher:
             params["indent"   ] = params["indent"   ] + 7
          if (params["headLevel"] >  0):
             params["headLevel"] = params["headLevel"] + 1
-         bids.printTrails(params)
+         bids.printTrails(**params())
 
 ###########################################################################
 
-   def printHasher(self, params):
+   def printHasher(self, **kwargs):
       """
       use: Print hasher's ID and name
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([('indent'   , -1),
-                                       ('headLevel',  0),
-                                       ('detail'   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "roster"):
@@ -249,14 +249,14 @@ class Hasher:
 
 ###########################################################################
 
-   def printResultByHasher(self, params = Params()):
+   def printResultByHasher(self, **kwargs):
       """
       use: Print successful bids submitted by hasher
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([('indent'   , -1),
-                                       ('headLevel',  0),
-                                       ('detail'   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       wantNoBid           = ((params["noBidHasher"]           or 0) != 0)
@@ -293,11 +293,11 @@ class Hasher:
                if (printNegative):
                   params["outputFile"].write("- No successful bids -")
             else:
-               self.successfulBids.printTrails(params)
+               self.successfulBids.printTrails(**params())
             params["outputFile"].write(
                 "   </td>\n")
          elif (params["outputFormat"] is None):
-            self.printHasher(params)
+            self.printHasher(**params())
 
             if (params["indent"   ] >= 0):
                params["indent"   ] = params["indent"   ] + 9
@@ -313,7 +313,7 @@ class Hasher:
                   print("".ljust(max(params["indent"], 0)) +
                         "- No successful bids -")
             else:
-               self.successfulBids.printTrails(params)
+               self.successfulBids.printTrails(**params())
          else:
             sys.stderr.write(selfName                          +
                              ": Hasher.printResultByHasher():" +
@@ -420,37 +420,37 @@ class Hashers:
 
 ###########################################################################
 
-   def printBids(self, params = Params()):
+   def printBids(self, **kwargs):
       """
       use: Print list of bids submitted by hashers belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       for hasher in self.list:
-         hasher.printBids(params)
+         hasher.printBids(**params())
 
 ###########################################################################
 
-   def printHashers(self, params = Params()):
+   def printHashers(self, **kwargs):
       """
       use: Print list of hashers belonging to us
       usage: See TimeSlots.printBids()
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       for hasher in self.list:
-         hasher.printHasher(params)
+         hasher.printHasher(**params())
 
 ###########################################################################
 
-   def printResultByHasher(self, params = Params()):
+   def printResultByHasher(self, **kwargs):
       """
       use: Print list of hashers belonging to us. If the hasher has one
            or more successful bids for trail, the trail information will
@@ -458,9 +458,9 @@ class Hashers:
       usage: See TimeSlots.printBids()
       pre: runBid() processing must be completed
       """
-      params = Params(params).default([("indent"   , -1),
-                                       ("headLevel",  0),
-                                       ("detail"   ,  0)])
+      params = Params(kwargs, indent    = -1,
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       if (params["outputFormat"] == "html"):
@@ -486,7 +486,7 @@ class Hashers:
          for hasher in self.list:
             if (nHasher == 0):
                params["outputFile"].write("  <tr>\n")
-            hasher.printResultByHasher(params)
+            hasher.printResultByHasher(**params())
             nHasher += 1
             if ((nHasher % 3) == 0):
                params["outputFile"].write("  </tr>\n")
@@ -501,9 +501,9 @@ class Hashers:
       elif (params["outputFormat"] is None):
          self.sortByName()
          for hasher in self.list:
-            hasher.printResultByHasher(params)
+            hasher.printResultByHasher(**params())
       else:
-         sys.stderr.write(selfName                        +
+         sys.stderr.write(selfName                           +
                           ": Hashers.printResultByHasher():" +
                           " unknown output format: "         +
                           params["outputFormat"] + "\n")

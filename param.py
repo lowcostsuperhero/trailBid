@@ -1,20 +1,15 @@
-# named: $Id: param.py 3 00:28:39 10-May-2021 rudyz $
+# name: $Id: param.py 4 18:22:33 16-May-2021 rudyz $
+"""
+use: Generic object based construct for converting variable number of
+     arguments in **kwargs into a Params object. Params objects gives us
+     slighly more flexibility and allows us to define a __getitem__ that
+     does not raise an exception if the key is not present in the
+     dictionary
+imp: Implemented as a wrapper, providing additional functionality methods,
+     around a key-value pair dictionary
+"""
 
-"""
-use: Generic object based construct for passing variable number of
-     arguments instead of **kwargs. Params() gives us slighly more
-     flexibility and allows constructs like:
-        params[self.__class__.__name__] = self
-     which we use to register the class name of each stack frame which
-     allows called methods to locate a calling class object
-usage: Although a Params() object is passed by value, data belonging to
-       the params object is effectively passed by reference. If changes
-       are intended to be made to the params values, the params objects
-       should probably be shallow copied by the Params class's
-       constructor behaving as a copy constructor by passing it an
-       existting Params object
-imp: Implemented as a key-value pair dictionary
-"""
+import sys
 
 ###########################################################################
 ###########################################################################
@@ -27,70 +22,113 @@ imp: Implemented as a key-value pair dictionary
 ###########################################################################
 
 class Params:
-   def __init__(self, key = None, value = None):
+   def __init__(self, kwargs, **defaultKWArgs):
       """
       use: A case-sensitive dictionary of key-value pairs that can be
-           passed to functions, procedures, and methods varargs without
-           involving **kwargs
-      usage: In the simplest form, a blank Params object can be
-             constructed with no arguments, otherwise, see set()
-             method
+           passed to functions, procedures, and method **kwargs
+      usage: Typically:
+                def foo(**kwargs):
+                   params = Params(kwargs, default1 = defaultValue1,
+                                           default2 = defaultValue2 ... )
       """
-      self.list = {}
-      self.set(key, value)
+      self.args = self.defaultKWArgs(kwargs, **defaultKWArgs)
+
+###################################
+
+   def __call__(self, **kwargs):
+      """
+      use: This method has dual purposes.
+           1. Simplifies a function, procedure, or method passing its
+              Params(kwargs) to a child function by using **kwargs()
+              instead of needing to know our internal layout
+           2. Sets dictionary values from kwargs
+      usage: For the former, typically, after construction as documented in
+                __init__(), params is passed as:
+                   childProcess(**params())
+             For the latter:
+                params(key1, value1,
+                       key2, value2 ...)
+      """
+      if (len(kwargs) != 0):
+         self.setValues(**kwargs)
+
+      return(self.args)
 
 ###################################
 
    def __getitem__(self, key):
-      return(self.list[key] if key in self.list else None)
+      return(self.args[key] if key in self.args else None)
 
 ###################################
 
    def __setitem__(self, key = None, value = None):
-      return(self.set(key, value))
+      self.args[key] = value
+      return(self)
+
+###################################
+
+   def __str__(self):
+      return(str(self.args))
 
 ###########################################################################
 
-   def default(self, key, value = None):
+   def defaultKWArgs(cls, kwargs, **defaultKWArgs):
       """
-      use: Set a default value for a key
-      imp: Will the passed key name to the passeod value if the key
-           name is not aready in our dictionary
+      use: A class method to merge a pair of dicts, where kwargs values
+           are augmented, but not overwritten, by values from defaultKWArgs
+      post: A new dictionary will be returned
       """
-      if (key is not None):
-         if (isinstance(key, str)):
-            if ((key not in self.list) and
-                (value is not None)):
-               self.set(key, value)
-         else:
-            for (k, v) in key:
-               if ((k not in self.list) and
-                   (v is not None)):
-                  self.list[k] = v
+      if (sys.version_info >= (3, 9)):
+         return(defaultKWArgs | kwargs)
+      elif (sys.version_info >= (3, 5)):
+         return({**defaultKWArgs, **kwargs})
+      else:
+         for key, value in defaultKWArgs.items():
+            if key not in kwargs:
+               kwargs[key] = value
+         return(kwargs)
+
+###########################################################################
+
+   def setKWArgs(cls, kwargs, **overridingKWargs):
+      """
+      use: A class method to merge a pair of dicts, where values in kwargs
+           can be overwritten by values from overrdingKWArgs
+      post: A new dictionary will be returned
+      """
+      if (sys.version_info >= (3, 9)):
+         return(kwargs | overridingKWArgs)
+      elif (sys.version_info >= (3, 5)):
+         return({**kwargs, **overridingKWArgs})
+      else:
+         for key, value in overridingKWArgs.items():
+            kwargs[key] = value
+         return(kwargs)
+
+###########################################################################
+
+   def setDefaults(self, **kwargs):
+      """
+      use: Merge the kwargs dictionary into our dictionary, where kwargs
+           values augments, but does not overwrite, values in our dictionary
+      post: New values from kwargs that don't have an existing key in our
+            dictionary will be inserted into our dictionary
+      """
+      for key, value in kwargs.items():
+         if (key not in self.args):
+            self.args[key] = value
       return(self)
 
 ###########################################################################
 
-   def set(self, key = None, value = None):
+   def setValues(self, **kwargs):
       """
-      use: Sets key-value pairs in our dictionary
-      usage: A single key value can be set by passing a key and value.
-             Multiple key-value pairs can get set by passing an array
-             of two-element tuples consisting of a key and value.
-             Finally another Params object can be passed in which case
-             a shallow copy of the passed object will be made
+      use: Merge the kwargs dictionary into our dictionary, where kwargs
+           values overwrites values in our dictionary
+      post: Values from kwargs will be inserted into our dictionary
       """
-      if (key is not None):
-         if (isinstance(key, str)):
-            if (value is not None):
-               self.list[key] = value
-            elif (key in self.list):
-               del(self.list[key])
-         elif (isinstance(key, Params)):
-            self.list = key.list.copy()
-         else:
-            for (k, v) in key:
-               self.list[k] = v
+      for key, value in kwargs.items():
+         self.args[key] = value
       return(self)
 
 ###########################################################################
