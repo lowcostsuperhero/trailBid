@@ -5,15 +5,15 @@ Unpack all files from an archive file, or git clone from
 
 
 
-INTRODUTION
------------
+INTRODUCTION
+------------
 This implements a trail bidding system for an interhash weekend where
 the multiple trails are offered per time slot, and where typically no
-single trail can accomodate all the hashers. The trailbid scripts provide
+single trail can accomodate all the hashers. The trailBid scripts provide
 a possible solution for hashers to indicate their preference of trails by
-bidding trails of interest at a time of their convenience. The trailbid
-scripts at a later time then batch processes the bids to award trails to
-hashers based on their bid values.
+bidding at a time of their convenience on trails of interest to them. The
+trailBid scripts at a later time then batch processes the bids to award
+trails to hashers based on their bid values.
 
 
 
@@ -57,14 +57,16 @@ The distribution of bids by each hasher is done by a method internally
 named "pool"; other distributions are "dribble", or "random". The bid
 distribution can also be passed:
    python generate.py iahLunar random
-Both the "-n" and distribution arguments are optional, and either, both, or
-neither can be passed.
+Both the "-n" and distribution arguments are optional, and either, both,
+or neither can be passed. Generating a random distribution of hasher bids
+in the iahLunar event directory is also available as:
+   make generate_random
 
 To process the bids, run trailBid.py and pass the event directory name:
    python trailBid.py iahLunar
 This is also accessible via make:
-   make trailbid.py
-Executing trailbid.py will result in a 00-orderOfHashers.txt file and an
+   make trailBid.py
+Executing trailBid.py will result in a 00-orderOfHashers.txt file and an
 html subdirectory to be created in the event directory. The
 00-orderOfHashers.txt file contains a slightly randomized sort of all the
 hashers with a slight advantage for registering early, based on an
