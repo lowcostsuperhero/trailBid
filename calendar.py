@@ -1,8 +1,8 @@
-# name: $Id: calendar.py 1 23:59:56 06-Apr-2021 rudyz $
+# name: $Id: calendar.py 2 01:29:41 18-May-2021 rudyz $
 
 """
-use: calendar is is a procedure, not a class. calendar reads a calendar
-     input file and joins trails to time slots
+use: calendar is a procedure, not a class. calendar reads a calendar input
+     file and joins trails to time slots
 """
 
 import csv
