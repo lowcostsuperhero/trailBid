@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 11 18:21:46 16-May-2021 rudyz $
+# name: $Id: hasher.py 12 01:29:17 18-May-2021 rudyz $
 
 import csv
 import random
@@ -45,6 +45,7 @@ class Hasher:
       self.sequence       = int(sequence)
       self.name           = name.strip()
      ###
+      self.uniqueName     = name
       self.bids           = bid_module.Bids() # bids submitted by this hasher
       self.successfulBids = bid_module.Bids() # successful bids to go on trail
       self.order          = self.sequence
@@ -112,6 +113,16 @@ class Hasher:
            hasher's list of winning bids
       """
       self.successfulBids.add(bid)
+
+###########################################################################
+
+   def displayName(self, style = None):
+      if (style == "pretty"):
+         return(self.pretty())
+      elif (style == "unique"):
+         return(self.uniqueName)
+      else:
+         return(str(self))
 
 ###########################################################################
 
@@ -210,24 +221,15 @@ class Hasher:
                               detail    =  0)
       params[self.__class__.__name__] = self
 
+      hasherName = self.displayName(params["hasherNameStyle"])
       if (params["outputFormat"] == "roster"):
          params["outputFile"].writelines(
             ["   <td>&nbsp;&EmptySmallSquare;&nbsp;&nbsp;&nbsp;" +
                           "&EmptySmallSquare;&nbsp;\n",
-             "     " + str(self) + "\n"               ,
+             "     " + hasherName + "\n"              ,
              "   </td>\n"])
-#          params["outputFile"].writelines(
-#             ["   <td>\n"                                   ,
-#              "    <div class=left>\n"                      ,
-#              "      &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n",
-#              "      " + str(self) + "\n"                   ,
-#              "    </div>\n"                                ,
-#              "    <div class=right>\n"                     ,
-#              "     &nbsp;&EmptySmallSquare;&nbsp;&nbsp;\n" ,
-#              "    </div>\n"                                ,
-#              "   </td>\n"])
       elif (params["outputFormat"] == "html"):
-         params["outputFile"].write("   <td>" + str(self) + "</td>\n")
+         params["outputFile"].write("   <td>" + hasherName + "</td>\n")
       elif (params["outputFormat"] is None):
          bidValue = None
          if (params["detail"] >= 1):
@@ -239,7 +241,7 @@ class Hasher:
                   self.pretty())
          else:
             print("".ljust(max(params["indent"], 0)) +
-                  self.pretty()      + " ~ "  +
+                  self.pretty() + " ~ "  +
                   "{:>4d}".format(bidValue))
       else:
          sys.stderr.write(selfName                      +
@@ -272,16 +274,14 @@ class Hasher:
       printNegative = (wantSuccessfulBid or
                       (wantNoBid and wantUnsuccessfulBid))
 
+      hasherName = self.displayName(params["hasherNameStyle"])
       if ((wantNoBid           and (not hasBid)      ) or
           (wantSuccessfulBid   and hasSuccessfulBid  ) or
           (wantUnsuccessfulBid and hasUnsuccessfulBid)):
          if (params["outputFormat"] == "html"):
-#             params["outputFile"].writelines(
-#                ['   <td valign="top">\n',
-#                 "    <b>" + str(self) + "</b><br/>\n"])
             params["outputFile"].writelines(
                ["   <td>\n",
-                "    <b>" + str(self) + "</b><br/>\n"])
+                "    <b>" + hasherName + "</b><br/>\n"])
 
             if (params["indent"] >= 0):
                params["indent"] = params["indent"] + 0
@@ -361,6 +361,18 @@ class Hashers:
                      writeFileReadError(filespec, lineNumber, exception,
                                         row[0] + ", " + row[1])
                      printFileReadError(lineNumber, row[0] + ", " + row[1])
+                                # disambiguify names if multiple hashers
+                                # have same names
+            self.sortByName()
+            lastHasher = None
+            for thisHasher in self.list:
+               if ((lastHasher is not None) and
+                   (lastHasher.name == thisHasher.name)):
+                  lastHasher.uniqueName = (lastHasher.nam +
+                                           "(" + str(lastHasher.id) + ")")
+                  thisHasher.uniqueName = (thisHasher.name +
+                                           "(" + str(thisHasher.id) + ")")
+               lastHasher = thisHasher
 
             if (settings["verbosity"] < 3):
                print(str(self.count) + " " +
@@ -526,7 +538,8 @@ class Hashers:
       post: Our internal array of hashers is re-ordered and sorted by
             each hasher's name
       """
-      self.list.sort(key = lambda hasher:hasher.name)
+      self.list.sort(key = lambda hasher:(hasher.name.upper(),
+                                          hasher.id))
 
 ###################################
 
