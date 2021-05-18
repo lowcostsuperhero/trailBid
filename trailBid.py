@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 11 17:44:16 16-May-2021 rudyz $
+# name: $Id: trailBid.py 12 01:30:04 18-May-2021 rudyz $
 """
 usage: Default execution is
           python trailBid.py
@@ -347,12 +347,15 @@ if ( __name__ == "__main__" ):
    print()
                                 # pass detail=1 to show hasher bid value
    trailBid.printResultByTrail()
-   trailBid.printResultByTrail(outputFormat = "html"  )
-   trailBid.printResultByTrail(outputFormat = "roster")
+   trailBid.printResultByTrail(hasherNameStyle = "unique",
+                               outputFormat    = "html"  )
+   trailBid.printResultByTrail(hasherNameStyle = "unique",
+                               outputFormat    = "roster")
 
    print()
-   trailBid.printResultByHasher(detail       = 1     )
-   trailBid.printResultByHasher(outputFormat = "html")
+   trailBid.printResultByHasher(detail          = 1     )
+   trailBid.printResultByHasher(hasherNameStyle = "unique",
+                                outputFormat    = "html")
 
 #    print()
 #    trailBid.printResultBySuccessfulHasher()
