@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 12 01:29:17 18-May-2021 rudyz $
+# name: $Id: hasher.py 13 01:25:20 20-May-2021 rudyz $
 
 import csv
 import random
@@ -29,7 +29,9 @@ class Hasher:
    """
    use: A wanker who can bid on trails
    imp: Native attributes:
-           id             : a unique internal identifier
+           id             : a unique internal identifier; the most
+                            appropriate value this is the hasher's rego
+                            number
            sequence       : default sorting order
            name           : name of hasher
         Virtual attributes:
@@ -39,17 +41,22 @@ class Hasher:
            rank           : sorting order for Bids.sortEquitably(). This
                             rank is based on the product of sequence and
                             order
+           duplicateNameP : boolean predicate indicating if this hasher's
+                            name is unique, or if another hasher has the
+                            same name
    """
    def __init__(self, id, sequence, name):
       self.id             = int(id)
       self.sequence       = int(sequence)
       self.name           = name.strip()
      ###
-      self.uniqueName     = name
       self.bids           = bid_module.Bids() # bids submitted by this hasher
       self.successfulBids = bid_module.Bids() # successful bids to go on trail
       self.order          = self.sequence
       self.rank           = self.order
+      self.duplicateNameP = False # another hasher has same name. this is set
+                                  # by Hashers() constructor during file read
+                                  # from hashers.txt
 
 ###################################
 
@@ -117,10 +124,10 @@ class Hasher:
 ###########################################################################
 
    def displayName(self, style = None):
-      if (style == "pretty"):
+      if   (style == "pretty"):
          return(self.pretty())
       elif (style == "unique"):
-         return(self.uniqueName)
+         return(self.uniqueName())
       else:
          return(str(self))
 
@@ -321,6 +328,14 @@ class Hasher:
                              params["outputFormat"] + "\n")
 
 ###########################################################################
+
+   def uniqueName(self):
+      if (self.duplicateNameP):
+         return(self.name + " (" + str(self.id) + ")")
+      else:
+         return(self.name)
+
+###########################################################################
 ###########################################################################
 ###########################################################################
 ###
@@ -364,15 +379,13 @@ class Hashers:
                                 # disambiguify names if multiple hashers
                                 # have same names
             self.sortByName()
-            lastHasher = None
-            for thisHasher in self.list:
-               if ((lastHasher is not None) and
-                   (lastHasher.name == thisHasher.name)):
-                  lastHasher.uniqueName = (lastHasher.nam +
-                                           "(" + str(lastHasher.id) + ")")
-                  thisHasher.uniqueName = (thisHasher.name +
-                                           "(" + str(thisHasher.id) + ")")
-               lastHasher = thisHasher
+            if (len(self.list) >= 2):
+               lastHasher = self.list[0]
+               for thisHasher in self.list[1:]:
+                  if (lastHasher.name.upper() == thisHasher.name.upper()):
+                     lastHasher.duplicateNameP = True
+                     thisHasher.duplicateNameP = True
+                  lastHasher = thisHasher
 
             if (settings["verbosity"] < 3):
                print(str(self.count) + " " +
