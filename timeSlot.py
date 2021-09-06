@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 6 18:07:40 16-May-2021 rudyz $
+# name: $Id: timeSlot.py 7 16:16:38 06-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -44,7 +44,7 @@ class TimeSlot:
 ###################################
 
    def __str__(self):
-      return(str(self.id) + ": " + self.name)
+      return(f"{self.id}: {self.name}")
 
 ###########################################################################
 
@@ -79,7 +79,7 @@ class TimeSlot:
       use: A prettily formatted ID and name suitable for display in a list
            of time slots
       """
-      return("{:<22s}".format("{:>3s}: {}".format(self.id, self.name)))
+      return(f"f'{self.id:>3}: {self.name}':<22")
 
 ###########################################################################
 
@@ -176,10 +176,9 @@ class TimeSlot:
             params["headLevel"] = params["headLevel"] + 1
          self.trails.printResultByTrail(**params())
       else:
-         sys.stderr.write(selfName                           +
-                          ": TimeSlot.printResultByTrail():" +
-                          " unknown output format: "         +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: TimeSlot.printResultByTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -234,13 +233,11 @@ class TimeSlots:
                      if isinstance(exception, DuplicateError):
                         exception = "duplicate time slot ID"
                      writeFileReadError(filespec, lineNumber, exception,
-                                        row[0] + ", " +
-                                        row[1] + ", " + row[2])
-                     printFileReadError(lineNumber, row[0] + ", " +
-                                                    row[1] + ", " + row[2])
+                                        f"{row[0]}, {row[1]}, {row[2]}")
+                     printFileReadError(lineNumber,
+                                        f"{row[0]}, {row[1]}, {row[2]}")
             if (settings["verbosity"] == 0):
-               print(str(self.count) + " " +
-                     plural(self.count, "time slot"))
+               print(f"{self.count} {plural(self.count, 'time slot')}")
 
 ###################################
 
@@ -378,10 +375,9 @@ class TimeSlots:
             timeSlot.printResultByTrail(**params())
             nTimeSlots += 1
       else:
-         sys.stderr.write(selfName                            +
-                          ": TimeSlots.printResultByTrail():" +
-                          " unknown output format: "          +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: TimeSlots.printResultByTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 

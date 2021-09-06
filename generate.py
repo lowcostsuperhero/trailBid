@@ -1,4 +1,4 @@
-# name: $Id: generate.py 2 00:55:45 04-May-2021 rudyz $
+# name: $Id: generate.py 3 16:16:37 06-Sep-2021 rudyz $
 """
 use: Generate hashers.txt and bids.txt files located in the event
      directory. These generated hashers and their bids may be useful
@@ -39,11 +39,9 @@ def generateHashers(hashers, eventDirectory, mode):
            hasherID,sequence,hasherName
    """
    file = open(os.path.join(eventDirectory, "hashers.txt"), mode)
-   file.write("hasherID,hasherName\n")
+   file.write("hasherID,sequence,hasherName\n")
    for id in range(1, hashers + 1):
-      file.write(str(id) + ", " +
-                 str(id) + ", " +
-                 "Hasher {:04d}".format(id) + "\n")
+      file.write(f"{id}, {id}, Hasher {id:04d}")
    file.close()
 
 ###########################################################################
@@ -84,15 +82,13 @@ def generateBids_dribble(hashers, trailMin, trailMax, allowance,
 
       for trailId in range(trailMin, trailMax + 1):
          if (bids[trailId] != 0):
-            file.write(str(hasherId)      + ", " +
-                       str(trailId )      + ", " +
-                       str(bids[trailId]) + "\n")
+            file.write(f"{hasherId}, {trailId}, {bids[trailId]}\n")
 
          if trailId == trailMax:
                                 # print out hasher's bid matrix
-            output = "{:>5d}: ".format(hasherId)
+            output = f"hasherID:>5d"
             for outId in range(trailMin, trailMax + 1):
-               output = "{} {:>4d}".format(output, bids[outId])
+               output = f"{output} {bids[outId]:>4d}"
             print(output)
 
       span = (span + 1) % (trailMax - trailMin + 1)
@@ -135,15 +131,13 @@ def generateBids_pool(hashers, trailMin, trailMax, allowance,
 
       for trailId in range(trailMin, trailMax + 1):
          if (bids[trailId] != 0):
-            file.write(str(hasherId)      + ", " +
-                       str(trailId )      + ", " +
-                       str(bids[trailId]) + "\n")
+            file.write(f"{hasherId}, {trailId}, {bids[trailId]}\n")
 
                                 # print out hasher's bid matrix
          if trailId == trailMax:
-            output = "{:>5d}: ".format(hasherId)
+            output = f"{hasherID:>5d}"
             for outId in range(trailMin, trailMax + 1):
-               output = "{} {:>4d}".format(output, bids[outId])
+               output = f"{output} {bids[outID]:>4d}"
             print(output)
 
    file.close()
@@ -184,13 +178,11 @@ def generateBids_random(hashers, trailMin, trailMax, allowance,
             reserve -= 1
          bids[trailId] = bidValue
 
-      output = "{:>5d}: ".format(hasherId)
+      output = f"{hasherId:>5d}"
       for trailId in range(trailMin, trailMax + 1):
          if (bids[trailId] != 0):
-            file.write(str(hasherId)      + ", " +
-                       str(trailId )      + ", " +
-                       str(bids[trailId]) + "\n")
-         output = "{} {:>4d}".format(output, bids[trailId])
+            file.write(f"{hasherId}, {trailId}, {bids[trailId]}\n")
+         output = f"{output} {bids[trailId]:>4d}"
       print(output)
 
    file.close()
@@ -216,15 +208,14 @@ if ( __name__ == "__main__" ):
       if (opt[0] == "-n"):
          hashers = int(opt[1])
       elif (opt[0] == "-h"):
-         print("usage: " + selfName + " [options]" +
-                         " [directoryName [distribution]]")
-         print("where option are:")
-         print("   -nNumber number of hashers to generate; if not provided," +
-                           " defaults to 2000")
-         print("   -h       help")
-         print("If directory name is not provided, it defaults to 'event';")
-         print("directoryName for the generated datafiles must already exist,")
-         print("distribution is one of: dribble, pool, or random;")
+         print(f"usage: {selfName} [options] [directoryName [distribution]]")
+         print( "where option are:")
+         print(f"   -nNumber number of hashers to generate; if not provided,"
+                  f" defaults to {hashers}")
+         print( "   -h       help")
+         print( "If directory name is not provided, it defaults to 'event';")
+         print( "directoryName for the generated datafiles must already exist,")
+         print( "distribution is one of: dribble, pool, or random;")
          exit(0)
 
    for arg in args:
@@ -233,8 +224,7 @@ if ( __name__ == "__main__" ):
       elif (distribution is None):
          distribution   = arg
       else:
-         sys.stderr.write(selfName + ": unwanted extra argument: " +
-                          arg + "\n")
+         sys.stderr.write(f"{selfName}: unwanted extra argument: {arg}\n" )
          exit(1)
 
    if (eventDirectory is None):
@@ -243,8 +233,8 @@ if ( __name__ == "__main__" ):
       distribution   = "random"
 
    if (not os.path.isdir(eventDirectory)):
-      sys.stderr.write(selfName + ": directory does not exist: " +
-                                  eventDirectory + "\n")
+      sys.stderr.write(f"{selfName}: directory does not exist: "
+                       f"{eventDirectory}\n")
       exit(1)
 
    settings.readFile(eventDirectory)

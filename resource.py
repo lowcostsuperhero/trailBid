@@ -1,4 +1,4 @@
-# name: $Id: resource.py 1 23:59:57 06-Apr-2021 rudyz $
+# name: $Id: resource.py 2 16:16:37 06-Sep-2021 rudyz $
 
 import os.path
 import sys
@@ -19,7 +19,7 @@ def printFileReadError(lineNumber, data):
    """
    use: Print nicely formatted error message during file reading
    """
-   print("*** Line " + str(lineNumber) + " *** " + data)
+   print(f"*** Line {str(lineNumber)} *** {data}")
 
 ###########################################################################
 
@@ -30,10 +30,10 @@ def printHeading(headline, indent = 0, headLevel = 0):
    """
    indentation        = "".ljust(0)
    underlineCharacter = ["#", "=", "-", "."]
-   print(indentation + headline)
+   print(f"{indentation} {headline}")
    if ((headLevel >= 1) and (headLevel < len(underlineCharacter))):
-      print(indentation +
-            underline_(headline, underlineCharacter[headLevel - 1]))
+      print(f"{indentation}"
+            f" {underline_(headline, underlineCharacter[headLevel - 1])}")
 
 ###########################################################################
 
@@ -41,8 +41,7 @@ def underline_(string, underlineCharacter = "-"):
    """
    use: Return an underline suitable for underlining the passed string
    """
-   return(("{:" + underlineCharacter + ">" +
-                  str(len(string))   + "s}").format(underlineCharacter))
+   return(f"{'':{underlineCharacter}>{len(string)}}")
 
 def underline(string, underlineCharacter = "-"):
    """
@@ -71,7 +70,7 @@ def plural(count, singular, multiple = None):
    if (count == 1):
       return(singular)
    else:
-      return(singular + "s" if multiple is None else multiple)
+      return(f"{singular}s" if multiple is None else multiple)
 
 ###########################################################################
 
@@ -80,10 +79,8 @@ def writeFileReadError(filename, lineNumber, exception, data):
    use: Write a nicely formatted error message to stderr during file
         reading
    """
-   sys.stderr.write(
-      selfName + ": " + filename         +
-      " line " + str(lineNumber) + ": "  +
-      str(exception)             + ":\n" +
-      "  >>> " + data            + "\n")
+   sys.stderr.write(f"{selfName}: {filename} line {lineNumber}: "
+                    f"{str(exception)}:\n"
+                    f"  >>> {data}\n")
 
 ###########################################################################

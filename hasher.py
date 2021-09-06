@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 13 01:25:20 20-May-2021 rudyz $
+# name: $Id: hasher.py 14 16:16:37 06-Sep-2021 rudyz $
 
 import csv
 import random
@@ -61,7 +61,7 @@ class Hasher:
 ###################################
 
    def __str__(self):
-      return(str(self.id)   + ': ' + self.name)
+      return(f"{self.id}: {self.name}")
 
 ###########################################################################
 
@@ -106,11 +106,10 @@ class Hasher:
          bidAllowance = int(settings["bidAllowance"])
          if ((oldBidValue <= bidAllowance) and
              (newBidValue  > bidAllowance)):
-            print("*** " + str(self) + ": exceeded bid allowance")
+            print(f"*** {str(self)}: exceeded bid allowance")
       else:
-         raise DuplicateError("duplicate bid for trail " +
-                              str(trail) + " by hasher " +
-                              str(hasher))
+         raise DuplicateError(f"duplicate bid for trail {str(trail)}"
+                              f" by hasher {str(hasher)}")
 
 ###########################################################################
 
@@ -142,7 +141,7 @@ class Hasher:
       timeSlot = None
       for bid in self.bids:
          if (bid.timeSlot != timeSlot):
-            print("  " + bid.timeSlot.name)
+            print(f"  {bid.timeSlot.name}")
             timeSlot = bid.timeSlot
          (loBid, hiBid) = bid.trail.successfulBookendValues
          wonTrail       = self.successfulBids.getBidsByTrailId(bid.trail.id)
@@ -156,15 +155,14 @@ class Hasher:
                            bid.trail.timeSlot.id)
                if (trails.count > 0):
                   trail = trails[0]
-                  outcome = "Won: " + str(trail.id)
+                  outcome = f"Adequate: {trail.id}"
                else:
                   outcome = "Loss unexpected"
             else:
                outcome = "Lost"
-         print("    {} {:>5d}~{:<5d} | {:>5d} {}".format(
-                    bid.trail.pretty()     ,
-                    hiBid, loBid, bid.value,
-                    outcome))
+         print(f"    {bid.trail.pretty()}"
+               f" {hiBid:>5d}~{loBid:<5d} | {bid.value:>5d}"
+               f" {outcome}")
 
 ###########################################################################
 
@@ -185,14 +183,7 @@ class Hasher:
       use: A prettily formatted ID and name suitable for display in a list
            of hashers
       """
-      return("{:<22s}".format("{:>5d}: {}".format(self.id, self.name)))
-#       return("{:<35s}".format("{:>4d}/{:>4d}@{:>10d}${:d}%{:d}".format(
-#                                  self.id,
-#                                  self.order,
-#                                  self.rank,
-#                                  self.successfulBidCount,
-#                                  self.bidCount) + ": " +
-#                               self.name))
+      return(f'{f"{self.id:>5d}: {self.name}" : <22}')
 
 ###########################################################################
 
@@ -206,7 +197,7 @@ class Hasher:
                               detail    =  0)
       params[self.__class__.__name__] = self
 
-      print("".ljust(max(params["indent"], 0)) + self.pretty())
+      print(f"{'':>max(params['indent'], 0)}{self.pretty()}")
       for timeSlot in self.bids.getTimeSlots().sortBySequence():
          bids = self.bids.getBidsByTimeSlotId(timeSlot.id)
 
@@ -236,7 +227,7 @@ class Hasher:
              "     " + hasherName + "\n"              ,
              "   </td>\n"])
       elif (params["outputFormat"] == "html"):
-         params["outputFile"].write("   <td>" + hasherName + "</td>\n")
+         params["outputFile"].write(f"   <td>{hasherName}</td>\n")
       elif (params["outputFormat"] is None):
          bidValue = None
          if (params["detail"] >= 1):
@@ -244,17 +235,14 @@ class Hasher:
             if (bid is not None):
                bidValue = bid.value
          if (bidValue is None):
-            print("".ljust(max(params["indent"], 0)) +
-                  self.pretty())
+            print(f"{'':>{max(params['indent'], 0)}}{self.pretty()}")
          else:
-            print("".ljust(max(params["indent"], 0)) +
-                  self.pretty() + " ~ "  +
-                  "{:>4d}".format(bidValue))
+            print(f"{'':>{max(params['indent'], 0)}}"
+                  f"{self.pretty()} ~ {bidValue:>4d}")
       else:
-         sys.stderr.write(selfName                      +
-                          ": Hasher.print():" +
-                          " unknown output format: "    +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Hasher.print(): "
+                          f" unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -301,8 +289,7 @@ class Hasher:
                   params["outputFile"].write("- No successful bids -")
             else:
                self.successfulBids.printTrails(**params())
-            params["outputFile"].write(
-                "   </td>\n")
+            params["outputFile"].write("   </td>\n")
          elif (params["outputFormat"] is None):
             self.printHasher(**params())
 
@@ -313,25 +300,24 @@ class Hasher:
 
             if (not hasBid):
                if (printNegative):
-                  print("".ljust(max(params["indent"], 0)) +
-                        "- No bids submitted -")
+                  print(f"{'':{max(params['indent'], 0)}}"
+                        f"- No bids submitted -")
             elif (hasUnsuccessfulBid):
                if (printNegative):
-                  print("".ljust(max(params["indent"], 0)) +
-                        "- No successful bids -")
+                  print(f"{'':{max(params['indent'], 0)}}"
+                        f"- No successful bids -")
             else:
                self.successfulBids.printTrails(**params())
          else:
-            sys.stderr.write(selfName                          +
-                             ": Hasher.printResultByHasher():" +
-                             " unknown output format: "        +
-                             params["outputFormat"] + "\n")
+            sys.stderr.write(f"{selfName}: Hasher.printResultByHasher():"
+                             f" unknown output format: "
+                             f"{params['outputFormat']}\n")
 
 ###########################################################################
 
    def uniqueName(self):
       if (self.duplicateNameP):
-         return(self.name + " (" + str(self.id) + ")")
+         return(f"{self.name} ({self.id})")
       else:
          return(self.name)
 
@@ -374,8 +360,8 @@ class Hashers:
                      if isinstance(exception, DuplicateError):
                         exception = "duplicate hasher ID"
                      writeFileReadError(filespec, lineNumber, exception,
-                                        row[0] + ", " + row[1])
-                     printFileReadError(lineNumber, row[0] + ", " + row[1])
+                                        f"{row[0]}, {row[1]}")
+                     printFileReadError(lineNumber, f"{row[0]}, {row[1]}")
                                 # disambiguify names if multiple hashers
                                 # have same names
             self.sortByName()
@@ -388,8 +374,7 @@ class Hashers:
                   lastHasher = thisHasher
 
             if (settings["verbosity"] < 3):
-               print(str(self.count) + " " +
-                     plural(self.count, "hasher"))
+               print(f"{self.count} {plural(self.count, 'hasher')}")
 
 ###################################
 
@@ -528,10 +513,9 @@ class Hashers:
          for hasher in self.list:
             hasher.printResultByHasher(**params())
       else:
-         sys.stderr.write(selfName                           +
-                          ": Hashers.printResultByHasher():" +
-                          " unknown output format: "         +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Hashers.printResultByHasher(): "
+                          f" unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -619,7 +603,7 @@ class Hashers:
                                 # re-randomizing the hashers, we'll just
                                 # read the order back in again
          with open(filespec, "r") as csvfile:
-            print("Restore hasher sort order from " + filespec)
+            print(f"Restore hasher sort order from {filespec}")
             lineNumber = 0
             csvReader  = csv.reader(csvfile)
             if (csv.Sniffer().has_header(open(csvfile.name).read(1024))):
@@ -636,7 +620,7 @@ class Hashers:
                   else:
                      printFileReadError(
                         lineNumber,
-                        filespec + ": hasher not found: " + str(hasherId))
+                        f"{filespec}: hasher not found: {hasherId}")
       else:
          print("Sort hasher order randomly")
                                 # we don't have existing data for

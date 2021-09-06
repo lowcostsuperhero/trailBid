@@ -1,4 +1,4 @@
-# name: $Id: bid.py 10 18:17:09 16-May-2021 rudyz $
+# name: $Id: bid.py 11 16:16:36 06-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -34,9 +34,7 @@ class Bid:
 ###################################
 
    def __str__(self):
-      return(str(self.hasher) + ' -> ' +
-             str(self.trail ) + '; '   +
-             str(self.value))
+      return(f"{self.hasher} -> {self.trail}; {self.value}")
 
 ###################################
 
@@ -59,14 +57,11 @@ class Bid:
       params[self.__class__.__name__] = self
 
       if (params["detail"] >= 1):
-         print("".ljust(max(params["indent"], 0))    +
-               self.hasher.pretty()        + " ~ "  +
-               "{:>4d}".format(self.value) + " -> " +
-               self.trail.pretty())
+         print(f"{'':>{max(params['indent'], 0)}}{self.hasher.pretty()} ~ "
+               f"{self.value:>4d} -> {self.trail.pretty()}")
       else:
-         print("".ljust(max(params["indent"], 0)) +
-               self.hasher.pretty()     + " -> " +
-               self.trail.pretty())
+         print(f"{'':>{max(params['indent'], 0)}}{self.hasher.pretty()} -> "
+               f"{self.trail.pretty()}")
 
 ###########################################################################
 
@@ -84,10 +79,9 @@ class Bid:
           (params["outputFormat"] in ("roster", "html"))):
          self.hasher.printHasher(**params())
       else:
-         sys.stderr.write(selfName                      +
-                          ": Bid.printResultByTrail():" +
-                          " unknown output format: "    +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Bid.printResultByTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -105,10 +99,9 @@ class Bid:
           (params["outputFormat"] == "html")):
          self.trail.printTrail(**params())
       else:
-         sys.stderr.write(selfName                   +
-                          ": Bid.printTrail():"      +
-                          " unknown output format: " +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Bid.printTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -174,7 +167,7 @@ class Bids:
                                  (trail  is None ))):
                            printFileReadError(
                               lineNumber,
-                              str(hasher) + " -> " + str(trail))
+                              f"{str(hasher)} -> {str(trail)}")
                      else:
                         bid = Bid(hasher, trail, value)
                         self.add(bid)
@@ -184,13 +177,12 @@ class Bids:
                         trail.addBid(bid)
                   except Exception as exception:
                      writeFileReadError(filespec, lineNumber, exception,
-                                        str(hasher) + " -> " + str(trail))
+                                        f"{str(hasher)} -> {str(trail)}")
                      printFileReadError(lineNumber,
-                                        str(hasher) + " -> " + str(trail))
+                                        f"{str(hasher)} -> {str(trail)}")
                      raise
             if (settings["verbosity"] < 3):
-               print(str(self.count) + " " +
-                     plural(self.count, "bid"))
+               print(f"{self.count} {plural(self.count, 'bid')}")
 
 ###################################
 
@@ -411,10 +403,9 @@ class Bids:
          for bid in self.list:
             bid.printHasher(**params())
       else:
-         sys.stderr.write(selfName                   +
-                          ": Bids.printHashers():"   +
-                          " unknown output format: " +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Bids.printHashers():"
+                          f" unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 

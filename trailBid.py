@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 12 01:30:04 18-May-2021 rudyz $
+# name: $Id: trailBid.py 13 16:16:39 06-Sep-2021 rudyz $
 """
 usage: Default execution is
           python trailBid.py
@@ -181,17 +181,16 @@ class TrailBid():
                headline += ", no bid"
             headline = re.sub("^, ", "", headline)
             headline = re.sub(", ([^,]*)$", ", and \\1", headline)
-            printHeading("/// results by " + headline + " hasher ///", 0, 1)
+            printHeading(f"/// results by {headline} hasher ///", 0, 1)
 
          params(indent    = 0,
                 headLevel = 2)
                                 # detail: 0=bare; 1=show bid value
          self.hashers.printResultByHasher(**params())
       else:
-         sys.stderr.write(selfName                           +
-                          ": TrailBid.printResultByTrail():" +
-                          " unknown output format: "         +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: TrailBid.printResultByTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -244,10 +243,9 @@ class TrailBid():
                 headLevel = 2)
          self.timeSlots.printResultByTrail(**params())
       else:
-         sys.stderr.write(selfName                           +
-                          ": TrailBid.printResultByTrail():" +
-                          " unknown output format: "         +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: TrailBid.printResultByTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 ###########################################################################
@@ -273,10 +271,6 @@ def help(verbosity = 0):
       print("  trailBid.printResultBySuccessfulHasher(params = Params())")
       print("  trailBid.printResultByTrail(params = Params())")
       print("  trailBid.printResultByUnsuccessfulHasher(params = Params())")
-#       for method in [attribute for attribute in dir(TrailBid)
-#                                if callable(getattr(TrailBid, attribute)) and
-#                                   attribute.startswith('__') is False]:
-#          print("trailBid." + method)
 
 ###########################################################################
 ###########################################################################
@@ -298,10 +292,10 @@ if ( __name__ == "__main__" ):
       if (opt[0] == "-v"):
          verbosity += 1
       elif (opt[0] == "-h"):
-         print("usage: " + selfName + "[options] directoryName")
-         print("where options are:")
-         print("   -v verbose; more v for more verbosity")
-         print("   -h help")
+         print(f"usage: {selfName} [options] directoryName")
+         print( "where options are:")
+         print( "   -v verbose; more v for more verbosity")
+         print( "   -h help")
          exit()
 
    for arg in args:
@@ -311,8 +305,7 @@ if ( __name__ == "__main__" ):
       eventDirectory = "event"
 
    if (not os.path.isdir(eventDirectory)):
-      sys.stderr.write(selfName       + ": no event directory: " +
-                       eventDirectory + "\n")
+      sys.stderr.write(f"{selfName}: no event directory: {eventDirectory}\n")
       exit(1)
 
    printHeading("/// settings ///", 0, 1)

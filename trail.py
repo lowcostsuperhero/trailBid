@@ -1,4 +1,4 @@
-# name: $Id: trail.py 13 18:12:35 16-May-2021 rudyz $
+# name: $Id: trail.py 14 16:16:38 06-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -42,7 +42,7 @@ class Trail:
 ###################################
 
    def __str__(self):
-       return(self.id + ": " + self.name)
+       return(f"{self.id}: {self.name}")
 
 ###########################################################################
 
@@ -110,8 +110,7 @@ class Trail:
           (timeSlot       is None)):
          self._timeSlot = timeSlot
       else:
-         raise(DuplicateError("trail " + str(self) +
-                              " already has time slot"))
+         raise(DuplicateError(f"trail {str(self)} already has time slot"))
    timeSlot = property(getTimeSlot, setTimeSlot)
 
 ###########################################################################
@@ -205,30 +204,25 @@ class Trail:
 
       if (params["outputFormat"] == "html"):
          nbsp = "&nbsp;" * (params["indent"] or 0)
-         params["outputFile"].write("    " + nbsp + str(self) + "<br/>\n")
+         params["outputFile"].write(f"    {nbsp}{str(self)}<br/>\n")
       elif (params["outputFormat"] is None):
          if (params["detail"] >= 2):
-            print("".ljust(max(params["indent"], 0)) +
-                  self.pretty()                      +
-                  " [" + "{:>5d}/{:<5d} ~{:<7d}".format(self.bidCount,
-                                                        self.capacity,
-                                                        self.bidValue) + "]")
+            print(f"{'':>{max(params['indent'], 0)}}{self.pretty()}"
+                  f" [{self.bidCount:>5d}/{self.capacity:<5d}"
+                  f" ~{self.bidValue:<7d}]")
          else:
             bid = None
             if (params["detail"] > 0):
                bid = params["Bid"]
             if (bid is None):
-               print("".ljust(max(params["indent"], 0)) +
-                     self.pretty())
+               print(f"{'':>{max(params['indent'], 0)}}{self.pretty()}")
             else:
-               print("".ljust(max(params["indent"], 0)) +
-                     "{} ~ {:>4d}".format(self.pretty(),
-                                          bid.value))
+               print(f"{'':>{max(params['indent'], 0)}}"
+                     f"{self.pretty()} ~ {bid.value:4d}")
       else:
-         sys.stderr.write(selfName                   +
-                          ": Trail.printTrail():"    +
-                          " unknown output format: " +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Trail.printTrail(): "
+                          f" unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 
 ###########################################################################
@@ -257,13 +251,13 @@ class Trail:
          if (not os.path.isdir(outputDirectory)):
             os.mkdir(outputDirectory)
          if (params["outputFormat"] == "roster"):
-            outputFilename = (str(self.id) + "-"                         +
-                              self.name.title().replace(" ", "").strip() +
-                              "-roster.html")
+            outputFilename = (f"{self.id}-"
+                              f"{self.name.title().replace(' ', '').strip()}"
+                              f"-roster.html")
          else:
-            outputFilename = (str(self.id) + "-"                         +
-                              self.name.title().replace(" ", "").strip() +
-                              ".html")
+            outputFilename = (f"{self.id}-"
+                              f"{self.name.title().replace(' ', '').strip()}"
+                              f".html")
          outputFile = os.path.join(outputDirectory, outputFilename)
          params["outputFile"] = open(outputFile, "w")
          params["outputFile"].writelines(
@@ -307,17 +301,10 @@ class Trail:
          params["outputFile"].close()
          params["outputFile"] = None
       elif (params["outputFormat"] is None):
-#          printHeading(self.name + " (" + str(self.successfulBidsCount) + "/" +
-#                                          str(self.capacity) + ") "           +
-#                                   str(highest) + " ~ " + str(lowest),
-#                       params["indent"],
-#                       params["headLevel"])
          printHeading(self.name, params["indent"], params["headLevel"])
-         printHeading("- Attendees = " +
-                      str(self.successfulBidsCount) + "/"  +
-                      str(self.capacity)            + "; " +
-                      "bid range = " + str(highest) + "~"  +
-                                       str(lowest),
+         printHeading(f"- Attendees = "
+                      f"{self.successfulBidsCount}/{self.capacity}; "
+                      f"bid range = {highest}~{lowest}",
                       params["indent"], params["headLevel"])
          self.successfulBids.sortByHasherName()
 
@@ -327,10 +314,9 @@ class Trail:
             params["headLevel"] = params["headLevel"] + 1
          self.successfulBids.printHashers(**params())
       else:
-         sys.stderr.write(selfName                        +
-                          ": Trail.printResultByTrail():" +
-                          " unknown output format: "      +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Trail.printResultByTrail(): "
+                          f"unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
@@ -339,7 +325,7 @@ class Trail:
       use: A prettily formatted ID and name suitable for display in a list
            of trails
       """
-      return("{:<22s}".format("{:>3s}: {}".format(self.id, self.name)))
+      return(f"{f'{self.id:>3}: {self.name}':<22}")
 
 #    def setTimeSlot(self, timeSlot):
 #       if (self.timeSlot is None):
@@ -368,14 +354,13 @@ class Trail:
                hasherTrails = bid.hasher.successfulBids.getTrailsByTimeSlotId(
                                  self.timeSlot.id)
                if (hasherTrails.count == 0):
-                  print(str(bid.hasher) + " ~ " + str(bid.value))
+                  print(f"{str(bid.hasher)} ~ {bid.value}")
                   self.successfulBids.add(bid)
                   bid.hasher.successfulBids.add(bid)
                else:
-                  print("   " + str(bid.hasher) + " -> " +
-                        str(hasherTrails[0].id))
+                  print(f"   {str(bid.hasher)} -> {hasherTrails[0].id}")
          if (self.successfulBidsCount >= self.capacity):
-            print("trail " + str(self) + " reached capacity")
+            print(f"trail {str(self)} reached capacity")
             break
 
 ###########################################################################
@@ -419,15 +404,14 @@ class Trails:
                   except DuplicateError as exception:
                      if isinstance(exception, DuplicateError):
                         exception = "duplicate trail ID"
-                     writeFileReadError(filespec, lineNumber, exception,
-                                        row[0] + ", " + row[1] + ", " +
-                                        row[2] + ", " + row[2])
-                     printFileReadError(lineNumber,
-                                        row[0] + ", " + row[1] + ", " +
-                                        row[2] + ", " + row[2])
+                     writeFileReadError(
+                        filespec, lineNumber, exception,
+                        f"{row[0]}, {row[1]}, {row[2]}, {row[2]}")
+                     printFileReadError(
+                        lineNumber,
+                        f"{row[0]}, {row[1]}, {row[2]}, {row[2]}")
             if (settings["verbosity"] == 0):
-               print(str(self.count) + " " +
-                     plural(self.count, "trail"))
+               print(f"{self.count} {plural(self.count, 'trail')}")
 
 ###################################
 
@@ -591,10 +575,9 @@ class Trails:
             trail.printResultByTrail(**params())
             nTrails += 1
       else:
-         sys.stderr.write(selfName                         +
-                          ": Trails.printResultByTrail():" +
-                          " unknown output format: "       +
-                          params["outputFormat"] + "\n")
+         sys.stderr.write(f"{selfName}: Trails.printResultByTrail(): "
+                          f" unknown output format: "
+                          f"{params['outputFormat']}\n")
 
 ###########################################################################
 
