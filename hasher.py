@@ -105,7 +105,7 @@ class Hasher:
             oldBidValue = self.bids.valueByTimeSlotId(bid.timeSlot.id)
             self.bids.add(bid)
             newBidValue  = self.bids.valueByTimeSlotId(bid.timeSlot.id)
-            bidAllowance = int(settings["bidAllowance"])
+            bidAllowance = int(settings.get('bidAllowance', 1000))
             if ((oldBidValue <= bidAllowance) and
                 (newBidValue  > bidAllowance)):
                 print(f"*** {str(self)}: exceeded bid allowance")
@@ -364,7 +364,7 @@ class Hashers:
                   try:
                      hasher = Hasher(int(row[0]), row[1], row[2])
                      self.add(hasher)
-                     if (settings["verbosity"] >= 3):
+                     if settings.get('verbosity', 0) >= 3:
                         print(str(hasher))
                   except DuplicateError as exception:
                      if isinstance(exception, DuplicateError):
@@ -383,7 +383,7 @@ class Hashers:
                      thisHasher.duplicateNameP = True
                   lastHasher = thisHasher
 
-            if (settings["verbosity"] < 3):
+            if settings.get('verbosity', 0) < 3:
                print(f"{self.count} {plural(self.count, 'hasher')}")
 
 ###################################
