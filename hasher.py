@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 14 16:16:37 06-Sep-2021 rudyz $
+# name: $Id: hasher.py 15 23:33:01 06-Sep-2021 rudyz $
 
 import csv
 import random
@@ -183,7 +183,7 @@ class Hasher:
       use: A prettily formatted ID and name suitable for display in a list
            of hashers
       """
-      return(f'{f"{self.id:>5d}: {self.name}" : <22}')
+      return(f'{f"{self.id:>5d}: {self.name}":<22}')
 
 ###########################################################################
 
