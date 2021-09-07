@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 7 16:16:38 06-Sep-2021 rudyz $
+# name: $Id: timeSlot.py 8 22:54:24 06-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -79,7 +79,7 @@ class TimeSlot:
       use: A prettily formatted ID and name suitable for display in a list
            of time slots
       """
-      return(f"f'{self.id:>3}: {self.name}':<22")
+      return(f"{f'{self.id:>3}: {self.name}':<22}")
 
 ###########################################################################
 
