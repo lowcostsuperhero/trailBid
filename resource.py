@@ -1,4 +1,4 @@
-# name: $Id: resource.py 2 16:16:37 06-Sep-2021 rudyz $
+# name: $Id: resource.py 3 20:31:50 08-Sep-2021 rudyz $
 
 import os.path
 import sys
@@ -11,6 +11,9 @@ class AlreadyDoneError(Exception):
    pass
 
 class DuplicateError(Exception):
+   pass
+
+class IncompleteObjectError(Exception):
    pass
 
 ###########################################################################

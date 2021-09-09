@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 15 23:33:01 06-Sep-2021 rudyz $
+# name: $Id: hasher.py 16 20:31:50 08-Sep-2021 rudyz $
 
 import csv
 import random
@@ -100,16 +100,24 @@ class Hasher:
            printed but otherwise nothing adverse will occur
       """
       if (bid not in self.bids.list):
-         oldBidValue = self.bids.valueByTimeSlotId(bid.timeSlot.id)
-         self.bids.add(bid)
-         newBidValue  = self.bids.valueByTimeSlotId(bid.timeSlot.id)
-         bidAllowance = int(settings["bidAllowance"])
-         if ((oldBidValue <= bidAllowance) and
-             (newBidValue  > bidAllowance)):
-            print(f"*** {str(self)}: exceeded bid allowance")
+         if ((bid.timeSlot    is not None) and
+             (bid.timeSlot.id is not None)):
+            oldBidValue = self.bids.valueByTimeSlotId(bid.timeSlot.id)
+            self.bids.add(bid)
+            newBidValue  = self.bids.valueByTimeSlotId(bid.timeSlot.id)
+            bidAllowance = int(settings["bidAllowance"])
+            if ((oldBidValue <= bidAllowance) and
+                (newBidValue  > bidAllowance)):
+                print(f"*** {str(self)}: exceeded bid allowance")
+         else:
+                                # a bid's timeSlot goes through the bid's
+                                # timeSlot
+            raise IncompleteObjectError(f'\n'
+                     f'   cannot bid on trail that has no time slot\n'
+                     f'   >>> {str(bid.trail)}')
       else:
-         raise DuplicateError(f"duplicate bid for trail {str(trail)}"
-                              f" by hasher {str(hasher)}")
+         raise DuplicateError(f"duplicate bid for trail {str(bid.trail)}"
+                              f" by hasher {str(bid.hasher)}")
 
 ###########################################################################
 
