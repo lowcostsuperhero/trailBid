@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 16 20:31:50 08-Sep-2021 rudyz $
+# name: $Id: hasher.py 17 20:52:02 08-Sep-2021 rudyz $
 
 import csv
 import random
@@ -112,12 +112,14 @@ class Hasher:
          else:
                                 # a bid's timeSlot goes through the bid's
                                 # timeSlot
-            raise IncompleteObjectError(f'\n'
-                     f'   cannot bid on trail that has no time slot\n'
-                     f'   >>> {str(bid.trail)}')
+            raise IncompleteObjectError(f"\n"
+                     f"   cannot bid on trail that has no time slot\n"
+                     f"   >>> {str(bid.trail)}")
       else:
-         raise DuplicateError(f"duplicate bid for trail {str(bid.trail)}"
-                              f" by hasher {str(bid.hasher)}")
+         raise DuplicateError(f"\n"
+                  f"   duplicate bid for trail\n"
+                  f"   >>> {str(bid.trail)}\n"
+                  f"    by {str(bid.hasher)}")
 
 ###########################################################################
 
