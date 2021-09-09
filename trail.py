@@ -1,4 +1,4 @@
-# name: $Id: trail.py 14 16:16:38 06-Sep-2021 rudyz $
+# name: $Id: trail.py 15 20:55:29 08-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -110,7 +110,9 @@ class Trail:
           (timeSlot       is None)):
          self._timeSlot = timeSlot
       else:
-         raise(DuplicateError(f"trail {str(self)} already has time slot"))
+         raise(DuplicateError(f"\n"
+            f"   trail already has time slot\n"
+            f"   >>> {str(self)}"))
    timeSlot = property(getTimeSlot, setTimeSlot)
 
 ###########################################################################
