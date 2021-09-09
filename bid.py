@@ -1,4 +1,4 @@
-# name: $Id: bid.py 12 20:31:49 08-Sep-2021 rudyz $
+# name: $Id: bid.py 13 20:52:30 08-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -27,8 +27,10 @@ class Bid:
    use: A bid is the hub of a hasher, a bid value, and a trail
    """
    def __init__(self, hasher, trail, value):
+                                # Bids.printHashers for outputFOrmat roster,
+                                # a virtualBid is created with a None trail
        assert (isinstance(hasher, hasher_module.Hasher) and
-               isinstance(trail , trail_module.Trail)), \
+               (trail is None or isinstance(trail , trail_module.Trail))), \
           "Bid constructor requires Hasher and Trail objects"
        self.hasher = hasher
        self.trail  = trail
