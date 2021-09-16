@@ -1,4 +1,4 @@
-# name: $Id: calendar.py 2 01:29:41 18-May-2021 rudyz $
+# name: $Id: tb_calendar.py 2 01:29:41 18-May-2021 rudyz $
 
 """
 use: calendar is a procedure, not a class. calendar reads a calendar input
