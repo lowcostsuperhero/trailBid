@@ -1,5 +1,5 @@
-# name: $Id: generate.py 4 21:25:19 03-Mar-2022 rudyz $
-"""
+# name: $Id: generate.py 5 10:59:04 04-Mar-2022 s01rz $
+
 use: Generate hashers.txt and bids.txt files located in the event
      directory. These generated hashers and their bids may be useful
      for development and/or debugging. Under normal circumstances, this
