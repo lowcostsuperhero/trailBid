@@ -1,4 +1,4 @@
-# name: $Id: generate.py 3 16:16:37 06-Sep-2021 rudyz $
+# name: $Id: generate.py 5 10:59:04 04-Mar-2022 s01rz $
 """
 use: Generate hashers.txt and bids.txt files located in the event
      directory. These generated hashers and their bids may be useful
@@ -41,7 +41,7 @@ def generateHashers(hashers, eventDirectory, mode):
    file = open(os.path.join(eventDirectory, "hashers.txt"), mode)
    file.write("hasherID,sequence,hasherName\n")
    for id in range(1, hashers + 1):
-      file.write(f"{id}, {id}, Hasher {id:04d}")
+      file.write(f"{id}, {id}, Hasher {id:04d}\n")
    file.close()
 
 ###########################################################################
@@ -135,9 +135,9 @@ def generateBids_pool(hashers, trailMin, trailMax, allowance,
 
                                 # print out hasher's bid matrix
          if trailId == trailMax:
-            output = f"{hasherID:>5d}"
+            output = f"{hasherId:>5d}"
             for outId in range(trailMin, trailMax + 1):
-               output = f"{output} {bids[outID]:>4d}"
+               output = f"{output} {bids[outId]:>4d}"
             print(output)
 
    file.close()
