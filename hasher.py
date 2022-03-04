@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 17 20:52:02 08-Sep-2021 rudyz $
+# name: $Id: hasher.py 21 15:02:09 04-Mar-2022 s01rz $
 
 import csv
 import random
@@ -105,7 +105,7 @@ class Hasher:
             oldBidValue = self.bids.valueByTimeSlotId(bid.timeSlot.id)
             self.bids.add(bid)
             newBidValue  = self.bids.valueByTimeSlotId(bid.timeSlot.id)
-            bidAllowance = int(settings.get('bidAllowance', 1000))
+            bidAllowance = int(settings["bidAllowance"])
             if ((oldBidValue <= bidAllowance) and
                 (newBidValue  > bidAllowance)):
                 print(f"*** {str(self)}: exceeded bid allowance")
@@ -364,7 +364,7 @@ class Hashers:
                   try:
                      hasher = Hasher(int(row[0]), row[1], row[2])
                      self.add(hasher)
-                     if settings.get('verbosity', 0) >= 3:
+                     if (settings["verbosity"] >= 3):
                         print(str(hasher))
                   except DuplicateError as exception:
                      if isinstance(exception, DuplicateError):
@@ -383,7 +383,7 @@ class Hashers:
                      thisHasher.duplicateNameP = True
                   lastHasher = thisHasher
 
-            if settings.get('verbosity', 0) < 3:
+            if (settings["verbosity"] < 3):
                print(f"{self.count} {plural(self.count, 'hasher')}")
 
 ###################################

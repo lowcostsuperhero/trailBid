@@ -1,4 +1,4 @@
-# name: $Id: generate.py 6 13:15:55 04-Mar-2022 s01rz $
+# name: $Id: generate.py 7 15:02:08 04-Mar-2022 s01rz $
 """
 use: Generate hashers.txt and bids.txt files located in the event
      directory. These generated hashers and their bids may be useful
@@ -241,7 +241,7 @@ if ( __name__ == "__main__" ):
    settings.setDefault("bidAllowance", 100)
    bidAllowance = int(settings["bidAllowance"])
 
-   filespec = os.path.join(eventDirectory, "calendar.txt")
+   filespec = os.path.join(eventDirectory, "trailTimes.txt")
    with (open(filespec, "r")) as csvfile:
       csvReader = csv.reader(csvfile)
       if (csv.Sniffer().has_header(open(csvfile.name).read(1024))):
