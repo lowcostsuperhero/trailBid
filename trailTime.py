@@ -1,8 +1,8 @@
-# name: $Id: tb_calendar.py 2 01:29:41 18-May-2021 rudyz $
+# name: $Id: trailTime.py 3 18:08:50 04-Mar-2022 s01rz $
 
 """
-use: calendar is a procedure, not a class. calendar reads a calendar input
-     file and joins trails to time slots
+use: trailTime is a procedure, not a class. trailTime reads a trailTimes
+     input file and joins trails to time slots
 """
 
 import csv
@@ -16,14 +16,14 @@ from setting  import *
 
 ###########################################################################
 
-def calendar(filespec, timeSlots, trails):
+def trailTime(filespec, timeSlots, trails):
    """
-   calendar is not a class; it is a plain procedure tying trails to time
+   trailTime is not a class; it is a plain procedure tying trails to time
    slots. A time slot is when one or more trails occur; a trail can belong
    to exactly one time slot
    """
    if (os.path.isdir(filespec)):
-      filespec = os.path.join(filespec, "calendar.txt")
+      filespec = os.path.join(filespec, "trailTimes.txt")
 
    with open(filespec, "r") as csvfile:
       events     = 0
@@ -36,8 +36,8 @@ def calendar(filespec, timeSlots, trails):
          events     += 1
          lineNumber += 1
          if (len(row) != 0):
-            timeSlot    = timeSlots.getById(row[0].strip())
-            trail       = trails.getById(str(row[1]).strip())
+            timeSlot    = timeSlots.getById(row[0])
+            trail       = trails.getById   (row[1])
             if ((timeSlot is None) or
                 (trail    is None)):
                                 # carve out for lineNumber 1 where timeSlot
