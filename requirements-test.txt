@@ -1,0 +1,4 @@
+faker
+pyfakefs
+pytest
+pytest-mock

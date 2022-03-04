@@ -36,7 +36,7 @@ demo/example event directory is provided as iahLunar. The required files in
 the event directory are:
    timeSlots.txt The timeslots during which trails will be run
    trails.txt    The trails for the weekend
-   calendar.txt  Defines which trails occur during which timeslot
+   trailTimes.txt Defines which trails occur during which timeslot
    settings.txt  Global settings
    hashers.txt   Hashers registered for the weekend
    bids.txt      Bids submitted by hashers for trail(s) they want to run
@@ -92,3 +92,21 @@ At its core, bids for trails are processed in order of:
          satisfy more hashers)
        - Trail ID as a last resort tie-breaker since the trail ID should
          be unique
+
+
+Environment Setup (for development)
+-----------------
+Setup a virtual environment:
+`virtualenv venv`
+If this gives a `command not found` error, do `pip install virtualenv`, and try again.
+
+After successfully creating a virtual environment, activate the virtualenv.
+
+On anything but Windows: `source venv/bin/activate`
+On Windows: `.\venv\bin\activate.bat` or something like that.
+
+
+Tests
+-----
+After setting up your virtual environment, do `pip install -r requirements-test.txt`
+You should then be able to execute `pytest` from the project root.

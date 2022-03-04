@@ -1,4 +1,4 @@
-# name: $Id: trail.py 15 20:55:29 08-Sep-2021 rudyz $
+# name: $Id: trail.py 16 21:26:09 03-Mar-2022 rudyz $
 
 import csv
 import sys
@@ -96,7 +96,7 @@ class Trail:
       """
       use: Property setter method assigning the time slot to which this
            trail belongs. The source of this relationship is usually from
-           the calendar.txt file
+           the trailTimes.txt file
       imp: Sets a time slot if the time slot has not been set. Attempts to
            set a trail's time slot if its time slot has already been set
            will result in a DuplicateError() exception. This is because

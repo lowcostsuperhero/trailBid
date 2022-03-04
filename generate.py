@@ -1,5 +1,5 @@
 # name: $Id: generate.py 5 10:59:04 04-Mar-2022 s01rz $
-"""
+
 use: Generate hashers.txt and bids.txt files located in the event
      directory. These generated hashers and their bids may be useful
      for development and/or debugging. Under normal circumstances, this
@@ -241,7 +241,7 @@ if ( __name__ == "__main__" ):
    settings.setDefault("bidAllowance", 100)
    bidAllowance = int(settings["bidAllowance"])
 
-   filespec = os.path.join(eventDirectory, "calendar.txt")
+   filespec = os.path.join(eventDirectory, "trailTimes.txt")
    with (open(filespec, "r")) as csvfile:
       csvReader = csv.reader(csvfile)
       if (csv.Sniffer().has_header(open(csvfile.name).read(1024))):

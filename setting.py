@@ -1,9 +1,6 @@
-# name: $Id: setting.py 1 23:59:57 06-Apr-2021 rudyz $
+# name: $Id: setting.py 4 21:26:08 03-Mar-2022 rudyz $
 
-import posixpath
 import re
-
-from pprint import pprint
 
 from resource import *
 
@@ -14,6 +11,7 @@ class Settings:
    use: Class for preference settings
    imp: Store key-value pairs based on case-insensitive keys
    """
+
    def __init__(self, settingsFilespec = None):
       self.dict   = {} # dictionary of keys:values pairs
       self.lookup = {} # case-insensitive dictionary for the actual key
@@ -26,6 +24,12 @@ class Settings:
    def __getitem__(self, key):
       return(self.dict[self.lookup[key.lower()]] if key.lower() in self.lookup
                                                  else None)
+
+###################################
+
+   def get(self, key, default):
+      value = self.__getitem__(key)
+      return(value if value else default)
 
 ###################################
 

@@ -1,4 +1,4 @@
-# name: $Id: bid.py 13 20:52:30 08-Sep-2021 rudyz $
+# name: $Id: bid.py 15 21:25:18 03-Mar-2022 rudyz $
 
 import csv
 import sys
@@ -8,9 +8,8 @@ import hasher   as hasher_module
 import timeSlot as timeSlot_module
 import trail    as trail_module
 
-from param    import *
-from resource import *
-from setting  import *
+from param   import *
+from setting import *
 
 ###########################################################################
 ###########################################################################
@@ -26,15 +25,16 @@ class Bid:
    """
    use: A bid is the hub of a hasher, a bid value, and a trail
    """
+
    def __init__(self, hasher, trail, value):
                                 # Bids.printHashers for outputFOrmat roster,
                                 # a virtualBid is created with a None trail
-       assert (isinstance(hasher, hasher_module.Hasher) and
-               (trail is None or isinstance(trail , trail_module.Trail))), \
-          "Bid constructor requires Hasher and Trail objects"
-       self.hasher = hasher
-       self.trail  = trail
-       self.value  = int(value)
+      assert ((isinstance(hasher, hasher_module.Hasher) and
+              (trail is None or isinstance(trail, trail_module.Trail)))), \
+         "Bid constructor requires Hasher and Trail objects"
+      self.hasher = hasher
+      self.trail  = trail
+      self.value  = int(value)
 
 ###################################
 
@@ -176,7 +176,7 @@ class Bids:
                      else:
                         bid = Bid(hasher, trail, value)
                         self.add(bid)
-                        if (settings["verbosity"] >= 3):
+                        if (settings.get('verbosity', 0) >= 3):
                            print(str(bid))
                         hasher.addBid(bid)
                         trail.addBid(bid)
@@ -186,7 +186,7 @@ class Bids:
                      printFileReadError(lineNumber,
                                         f"{str(hasher)} -> {str(trail)}")
                      raise
-            if (settings["verbosity"] < 3):
+            if (settings.get('verbosity', 0) < 3):
                print(f"{self.count} {plural(self.count, 'bid')}")
 
 ###################################
@@ -203,9 +203,9 @@ class Bids:
       post: Return value is a tuple of two element
       """
       return(min(self.list,
-                 key=lambda b:b.value).value if self.count > 0 else None,
+                 key=lambda b: b.value).value if self.count > 0 else None,
              max(self.list,
-                 key=lambda b:b.value).value if self.count > 0 else None)
+                 key=lambda b: b.value).value if self.count > 0 else None)
 
 ###################################
 
@@ -239,7 +239,7 @@ class Bids:
       if (trailId not in self.trailBids):
          self.trailBids[trailId] = []
       self.trailBids[trailId].append(bid)
-      timeSlotId = bid.trail.timeSlot.id
+      timeSlotId = int(bid.trail.timeSlot.id)
       if (timeSlotId not in self.timeSlotBids):
          self.timeSlotBids[timeSlotId] = []
       self.timeSlotBids[timeSlotId].append(bid)
@@ -265,7 +265,7 @@ class Bids:
 
 ###########################################################################
 
-   def getBidsByTimeSlotId(self, timeSlotId):
+   def getBidsByTimeSlotId(self, timeSlotId: int):
       """
       use: All bids submitted to trails belonging to time slot
            corresponding to passed time slot ID
@@ -296,7 +296,7 @@ class Bids:
            time slot corresponding to passed time slot ID
       """
       result = hasher_module.Hashers()
-      for bid in self.getBidsByTimeSlotId(timeSlotId).list:
+      for bid in self.getBidsByTimeSlotId(int(timeSlotId)).list:
          result.addUnique(bid.hasher)
       return(result)
 
@@ -354,8 +354,8 @@ class Bids:
       usage: See TimeSlots.printBids()
       """
       params = Params(kwargs, indent    = -1,
-                              headLevel = 0,
-                              detail    = 0)
+                              headLevel =  0,
+                              detail    =  0)
       params[self.__class__.__name__] = self
 
       for bid in self.list:
@@ -421,7 +421,7 @@ class Bids:
       usage: See TimeSlots.printBids()
       """
       params = Params(kwargs, indent    = -1,
-                              headLevel =  0,
+                              headLevel =  0 ,
                               detail    =  0)
       params[self.__class__.__name__] = self
 
@@ -446,8 +446,8 @@ class Bids:
       post: Our internal array of bids is re-ordered and sorted by each
             bid's hasher's name
       """
-      self.list.sort(key = lambda bid:(bid.hasher.name,
-                                       bid.hasher.id))
+      self.list.sort(key = lambda bid: (bid.hasher.name,
+                                        bid.hasher.id))
       return(self.list)
 
 ###########################################################################
@@ -459,8 +459,8 @@ class Bids:
       post: Our internal array of bids is re-ordered and sorted by each
             bid's trail's time slot sequence and trail sequence
       """
-      self.list.sort(key = lambda bid:(bid.trail.timeSlot.sequence,
-                                       bid.trail.sequence))
+      self.list.sort(key = lambda bid: (bid.trail.timeSlot.sequence,
+                                        bid.trail.sequence))
 
 ###########################################################################
 
@@ -486,7 +486,7 @@ class Bids:
            tie-breaker within all the bids with equal bid values
       see also: Hashers.sortByRandom()
       """
-      self.list.sort(key = lambda bid:(
+      self.list.sort(key = lambda bid: (
                         -bid.value                   , # higher bid value 1st
                         bid.hasher.successfulBidCount, # favor less successful
                         bid.hasher.bidCount          , # advantage fewer bids

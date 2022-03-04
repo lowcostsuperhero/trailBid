@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 13 16:16:39 06-Sep-2021 rudyz $
+# name: $Id: trailBid.py 15 21:26:09 03-Mar-2022 rudyz $
 """
 usage: Default execution is
           python trailBid.py
@@ -13,15 +13,17 @@ import getopt
 import posixpath
 import sys
 
-from param    import *
-from resource import *
-from setting  import *
+from pprint import pprint
 
-from trail    import *
-from timeSlot import *
-from calendar import *
-from hasher   import *
-from bid      import *
+from param     import *
+from resource  import *
+from setting   import *
+
+from trail     import *
+from timeSlot  import *
+from trailTime import *
+from hasher    import *
+from bid       import *
 
 ###########################################################################
 ###########################################################################
@@ -45,12 +47,12 @@ class TrailBid():
    imp: The set of trail bid data is stored in a series of CSV files in a
         subdirectory.
         The files, and fields, of the CSV files are:
-           settings.txt : key = value file; not in CSV format
-           timeSlots.txt: timeSlotId, sequence, trailGroupName
-           trails.txt   : trailID, sequence, trailName, trailCapacity
-           calendar.txt : timeSlotID, trailID
-           hashers.txt  : hasherID, hasherName
-           bids.txt     : hasherID, trailID, bidAmount
+           settings.txt  : key = value file; not in CSV format
+           timeSlots.txt : timeSlotId, sequence, trailGroupName
+           trails.txt    : trailID, sequence, trailName, trailCapacity
+           trailTimes.txt: timeSlotID, trailID
+           hashers.txt   : hasherID, hasherName
+           bids.txt      : hasherID, trailID, bidAmount
    """
    def __init__(self, eventDirectory = None):
       """
@@ -65,10 +67,10 @@ class TrailBid():
       self.trails = Trails(eventDirectory)
 
       print()
-      printHeading("/// calendar ///", 0, 1)
-                                   # calendar is not a class. it joins trails
-                                   # to timeSlots
-      calendar(eventDirectory, self.timeSlots, self.trails)
+      printHeading("/// trailTimes ///", 0, 1)
+                                   # trailTime is not a class. it joins
+                                   # trails to timeSlots
+      trailTime(eventDirectory, self.timeSlots, self.trails)
 
       print()
       printHeading("/// hashers ///", 0, 1)
