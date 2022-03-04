@@ -1,4 +1,4 @@
-# name: $Id: bid.py 17 15:02:07 04-Mar-2022 s01rz $
+# name: $Id: bid.py 18 16:58:27 04-Mar-2022 s01rz $
 
 import csv
 import sys
@@ -158,8 +158,8 @@ class Bids:
                lineNumber += 1
                if (len(row) != 0):
                   try:
-                     hasher = hashers.getById(int(row[0]))
-                     trail  = trails.getById(str(row[1]).lstrip())
+                     hasher = hashers.getById(row[0])
+                     trail  = trails.getById (row[1])
                      value  = int(row[2])
                      if ((hasher is None) or
                          (trail  is None)):
@@ -234,7 +234,7 @@ class Bids:
       if (hasherId not in self.hasherBids):
          self.hasherBids[int(hasherId)] = []
       self.hasherBids[int(hasherId)].append(bid)
-      trailId = bid.trail.id.strip()
+      trailId = bid.trail.id
       if (trailId not in self.trailBids):
          self.trailBids[trailId] = []
       self.trailBids[trailId].append(bid)

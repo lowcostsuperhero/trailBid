@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 21 15:02:09 04-Mar-2022 s01rz $
+# name: $Id: hasher.py 22 16:58:28 04-Mar-2022 s01rz $
 
 import csv
 import random
@@ -435,8 +435,7 @@ class Hashers:
       """
       use: Get a hasher by its hasher ID
       """
-      return(self.lookupIDs[int(id)] if int(id) in self.lookupIDs
-                                     else None)
+      return(self.lookupIDs[int(id)] if int(id) in self.lookupIDs else None)
 
 ###########################################################################
 

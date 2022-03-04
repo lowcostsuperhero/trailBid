@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 18 15:02:10 04-Mar-2022 s01rz $
+# name: $Id: trailBid.py 19 16:58:30 04-Mar-2022 s01rz $
 """
 usage: Default execution is
           python trailBid.py
@@ -259,7 +259,7 @@ def explain(hasherId):
    usage: Pass hasherID
    pre: runBid() processing must be completed
    """
-   trailBid.hashers.getById(int(hasherId)).explain()
+   trailBid.hashers.getById(hasherId).explain()
 
 def help(verbosity = 0):
    print("explain(hasherID)   explain a hasher's bids")

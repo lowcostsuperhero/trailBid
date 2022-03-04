@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 8 22:54:24 06-Sep-2021 rudyz $
+# name: $Id: timeSlot.py 11 16:58:29 04-Mar-2022 s01rz $
 
 import csv
 import sys
@@ -35,7 +35,7 @@ class TimeSlot:
         name, and capacity of how many hashers can attend the trail
    """
    def __init__(self, id, sequence, name):
-      self.id       = str(id).strip()
+      self.id       = int(id)
       self.sequence = int(sequence)
       self.name     = name.strip()
      ###
@@ -271,8 +271,7 @@ class TimeSlots:
       """
       use: Get a time slot by its time slot ID
       """
-      return(self.lookupIDs[id] if id in self.lookupIDs
-             else None)
+      return(self.lookupIDs[int(id)] if int(id) in self.lookupIDs else None)
 
 ###########################################################################
 

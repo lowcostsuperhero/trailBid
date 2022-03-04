@@ -1,4 +1,4 @@
-# name: $Id: trail.py 15 20:55:29 08-Sep-2021 rudyz $
+# name: $Id: trail.py 18 16:58:29 04-Mar-2022 s01rz $
 
 import csv
 import sys
@@ -30,7 +30,7 @@ class Trail:
         the trail
    """
    def __init__(self, id, sequence, name, capacity):
-       self.id             = str(id).strip()
+       self.id             = int(id)
        self.sequence       = int(sequence)
        self.name           = name.strip()
        self.capacity       = int(capacity)
@@ -485,7 +485,7 @@ class Trails:
       """
       use: Get a trail by its trail ID
       """
-      return(self.lookupIDs[id] if id in self.lookupIDs else None)
+      return(self.lookupIDs[int(id)] if int(id) in self.lookupIDs else None)
 
 ###########################################################################
 
