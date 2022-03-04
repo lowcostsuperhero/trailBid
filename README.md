@@ -102,7 +102,6 @@ At its core, bids for trails are processed in order of:
 
 
 ## Environment Setup (for development)
-
 Setup a virtual environment:<br/>
 &nbsp;&nbsp;&nbsp;`virtualenv venv`<br/>
 If this gives a _command not found_ error, do `pip install virtualenv`,

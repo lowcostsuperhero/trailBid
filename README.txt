@@ -36,7 +36,7 @@ demo/example event directory is provided as iahLunar. The required files in
 the event directory are:
    timeSlots.txt The timeslots during which trails will be run
    trails.txt    The trails for the weekend
-   trailTimes.txt Defines which trails occur during which timeslot
+   calendar.txt  Defines which trails occur during which timeslot
    settings.txt  Global settings
    hashers.txt   Hashers registered for the weekend
    bids.txt      Bids submitted by hashers for trail(s) they want to run
@@ -110,3 +110,4 @@ Tests
 -----
 After setting up your virtual environment, do `pip install -r requirements-test.txt`
 You should then be able to execute `pytest` from the project root.
+

@@ -1,4 +1,4 @@
-# name: $Id: generate.py 4 21:25:19 03-Mar-2022 rudyz $
+# name: $Id: generate.py 3 16:16:37 06-Sep-2021 rudyz $
 """
 use: Generate hashers.txt and bids.txt files located in the event
      directory. These generated hashers and their bids may be useful
@@ -41,7 +41,7 @@ def generateHashers(hashers, eventDirectory, mode):
    file = open(os.path.join(eventDirectory, "hashers.txt"), mode)
    file.write("hasherID,sequence,hasherName\n")
    for id in range(1, hashers + 1):
-      file.write(f"{id}, {id}, Hasher {id:04d}\n")
+      file.write(f"{id}, {id}, Hasher {id:04d}")
    file.close()
 
 ###########################################################################
@@ -135,9 +135,9 @@ def generateBids_pool(hashers, trailMin, trailMax, allowance,
 
                                 # print out hasher's bid matrix
          if trailId == trailMax:
-            output = f"{hasherId:>5d}"
+            output = f"{hasherID:>5d}"
             for outId in range(trailMin, trailMax + 1):
-               output = f"{output} {bids[outId]:>4d}"
+               output = f"{output} {bids[outID]:>4d}"
             print(output)
 
    file.close()
@@ -241,7 +241,7 @@ if ( __name__ == "__main__" ):
    settings.setDefault("bidAllowance", 100)
    bidAllowance = int(settings["bidAllowance"])
 
-   filespec = os.path.join(eventDirectory, "trailTimes.txt")
+   filespec = os.path.join(eventDirectory, "calendar.txt")
    with (open(filespec, "r")) as csvfile:
       csvReader = csv.reader(csvfile)
       if (csv.Sniffer().has_header(open(csvfile.name).read(1024))):

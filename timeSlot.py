@@ -1,4 +1,4 @@
-# name: $Id: timeSlot.py 9 21:26:08 03-Mar-2022 rudyz $
+# name: $Id: timeSlot.py 8 22:54:24 06-Sep-2021 rudyz $
 
 import csv
 import sys
@@ -51,7 +51,7 @@ class TimeSlot:
    def addTrail(self, trail):
       """
       use: Add a trail to this timeSlot. This is nominally called by the
-          trailTime() function as part of reading the trailTimes.txt file
+          calendar() function as part of reading the calendar.txt file
       """
       self.trails.add(trail)
 

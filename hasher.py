@@ -1,4 +1,4 @@
-# name: $Id: hasher.py 19 21:25:19 03-Mar-2022 rudyz $
+# name: $Id: hasher.py 17 20:52:02 08-Sep-2021 rudyz $
 
 import csv
 import random
@@ -364,7 +364,7 @@ class Hashers:
                   try:
                      hasher = Hasher(int(row[0]), row[1], row[2])
                      self.add(hasher)
-                     if (settings.get('verbosity', 0) >= 3):
+                     if settings.get('verbosity', 0) >= 3:
                         print(str(hasher))
                   except DuplicateError as exception:
                      if isinstance(exception, DuplicateError):
@@ -383,7 +383,7 @@ class Hashers:
                      thisHasher.duplicateNameP = True
                   lastHasher = thisHasher
 
-            if (settings.get('verbosity', 0) < 3):
+            if settings.get('verbosity', 0) < 3:
                print(f"{self.count} {plural(self.count, 'hasher')}")
 
 ###################################
