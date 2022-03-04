@@ -1,4 +1,4 @@
-# name: $Id: trailBid.py 13 16:16:39 06-Sep-2021 rudyz $
+# name: $Id: trailBid.py 17 13:16:07 04-Mar-2022 s01rz $
 """
 usage: Default execution is
           python trailBid.py
@@ -12,6 +12,8 @@ pre: If trails, hashers, or bids have changed, the 00-orderOfHashers.txt
 import getopt
 import posixpath
 import sys
+
+from pprint import pprint
 
 from param    import *
 from resource import *
