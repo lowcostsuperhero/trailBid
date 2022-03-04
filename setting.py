@@ -1,9 +1,8 @@
-# name: $Id: setting.py 1 23:59:57 06-Apr-2021 rudyz $
+# name: $Id: setting.py 3 19:22:26 03-Mar-2022 rudyz $
 
 import re
 
 from resource import *
-
 
 ###########################################################################
 
@@ -17,7 +16,7 @@ class Settings:
         self.dict = {}  # dictionary of keys:values pairs
         self.lookup = {}  # case-insensitive dictionary for the actual key
         if ((settingsFilespec is not None) and
-                (settingsFilespec != '')):
+            (settingsFilespec != '')):
             self.readFile(settingsFilespec)
 
     ###################################
