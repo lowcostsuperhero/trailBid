@@ -2,8 +2,8 @@
 
 These Python scripts require Python 3.
 
-Unpack all files from an archive file, or git clone from
-git@github.com:lowcostsuperhero/trailBid.git
+Unpack all files from an archive file, or git clone from<br/>
+&nbsp;&nbsp;&nbsp;`git@github.com:lowcostsuperhero/trailBid.git`
 
 
 
@@ -19,11 +19,12 @@ trails to hashers based on their bid values.
 
 
 ## QUICKSTART
-cd into the trailBid directory, then execute:
-make generate_pool
-make trailBid.py
+cd into the _trailBid_ directory, then execute:
+- make generate_pool
+- make trailBid.py
+
 Results will be dumped to the screen, as well as in html files in
-iahLunar/html
+_iahLunar/html_
 
 
 
@@ -31,42 +32,49 @@ iahLunar/html
 All the Python scripts are located in the same directory, which will also
 need to have a subdirectory, called an event directory, for all the data
 files necessary to define all the trails for a hashing weekend. A
-demo/example event directory is provided as iahLunar. The required files in
-the event directory are:
-timeSlots.txt The timeslots during which trails will be run
-trails.txt    The trails for the weekend
-trailTimes.txt Defines which trails occur during which timeslot
-settings.txt  Global settings
-hashers.txt   Hashers registered for the weekend
-bids.txt      Bids submitted by hashers for trail(s) they want to run
+demo/example event directory is provided as _iahLunar_. The required files
+in the event directory are:
+|File          |Usage  |
+|--------------|-------|
+|timeSlots.txt |The timeslots during which trails will be run|
+|trails.txt    |The trails for the weekend|
+|trailTimes.txt|Defines which trails occur during which timeslot|
+|settings.txt  |Global settings|
+|hashers.txt   |Hashers registered for the weekend|
+|bids.txt      |Bids submitted by hashers for trail(s) they want to run|
+
 In the iahLunar demo/example directory, hashers.txt and bids.txt are
 missing. For an actual event, this information should be supplied by the
 event mismanagement. For iahLunar, virtual hashers and virtual bids can be
-generated for these two files by executing:
-python generate.py iahLunar pool
-This is also accessible via make:
-make generate_pool
+generated for these two files by executing:<br/>
+&nbsp;&nbsp;&nbsp;`python generate.py iahLunar pool`<br/>
+This is also accessible via make:<br/>
+&nbsp;&nbsp;&nbsp;`make generate_pool`
 
 NOTE: All the Makefile targets pass iahLunar as the event directory.
 
-By default, generate.py will create 2000 hashers, this number can be
-changed by passing -n and the number of hashers to generate, eg:
-python generate.py -n1234 iahLunar
+By default, `generate.py` will create 2000 hashers, this number can be
+changed by passing -n and the number of hashers to generate, eg:<br/>
+&nbsp;&nbsp;&nbsp;`python generate.py -n1234 iahLunar`
+
 The distribution of bids by each hasher is done by a method internally
 named "pool"; other distributions are "dribble", or "random". The bid
-distribution can also be passed:
-python generate.py iahLunar random
+distribution can also be passed:<br/>
+&nbsp;&nbsp;&nbsp;`python generate.py iahLunar random`
+
 Both the "-n" and distribution arguments are optional, and either, both,
 or neither can be passed. Generating a random distribution of hasher bids
-in the iahLunar event directory is also available as:
-make generate_random
+in the iahLunar event directory is also available as:<br/>
+&nbsp;&nbsp;&nbsp;`make generate_random`
 
-To process the bids, run trailBid.py and pass the event directory name:
-python trailBid.py iahLunar
-This is also accessible via make:
-make trailBid.py
-Executing trailBid.py will result in a 00-orderOfHashers.txt file and an
-html subdirectory to be created in the event directory. The
+To process the bids, run `trailBid.py` and pass the event directory
+name:<br/>
+&nbsp;&nbsp;&nbsp;`python trailBid.py iahLunar`<br/>
+This is also accessible via make:<br/>
+&nbsp;&nbsp;&nbsp;`make trailBid.py`
+
+Executing _trailBid.py_ will result in a _00-orderOfHashers.txt_ file and
+an html subdirectory to be created in the event directory. The
 00-orderOfHashers.txt file contains a slightly randomized sort of all the
 hashers with a slight advantage for registering early, based on an
 assumption of a monotonically increasing rego/registration ID. The intent
@@ -95,17 +103,19 @@ At its core, bids for trails are processed in order of:
 
 ## Environment Setup (for development)
 
-Setup a virtual environment:
-`virtualenv venv`
-If this gives a `command not found` error, do `pip install virtualenv`, and try again.
+Setup a virtual environment:<br/>
+&nbsp;&nbsp;&nbsp;`virtualenv venv`<br/>
+If this gives a _command not found_ error, do `pip install virtualenv`,
+and try again.
 
 After successfully creating a virtual environment, activate the virtualenv.
 
-On anything but Windows: `source venv/bin/activate`
+On anything but Windows: `source venv/bin/activate`<br/>
 On Windows: `.\venv\bin\activate.bat` or something like that.
 
 
 ## Tests
-After setting up your virtual environment, do `pip install -r requirements-test.txt`
+After setting up your virtual environment, do
+`pip install -r requirements-test.txt`
 
 You should then be able to execute `pytest` from the project root.
